@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clabstream — TikTok Analytics</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --c-bg:        #07070e;
+  --c-surface:   #0c0c1a;
+  --c-card:      #101020;
+  --c-card2:     #13132a;
+  --c-border:    rgba(249,115,22,0.12);
+  --c-border2:   rgba(124,58,237,0.25);
+  --c-orange:    #f97316;
+  --c-orange2:   #fb923c;
+  --c-purple:    #7c3aed;
+  --c-purple2:   #a855f7;
+  --c-rose:      #f43f5e;
+  --c-emerald:   #10b981;
+  --c-amber:     #fbbf24;
+  --c-cyan:      #22d3ee;
+  --c-text:      #eeeef4;
+  --c-muted:     #6b7280;
+  --c-subtle:    #1c1c38;
+  --grad:        linear-gradient(135deg, #f97316, #7c3aed);
+  --grad-soft:   linear-gradient(135deg, rgba(249,115,22,0.15), rgba(124,58,237,0.1));
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--c-bg);
+  color: var(--c-text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* BG TEXTURE */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(249,115,22,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,58,237,0.025) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+body::after {
+  content: '';
+  position: fixed; top: -30%; left: -10%; width: 60%; height: 60%;
+  background: radial-gradient(ellipse, rgba(124,58,237,0.06) 0%, transparent 65%);
+  pointer-events: none; z-index: 0;
+}
+
+.wrap { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 20px; }
+
+/* TYPOGRAPHY */
+.font-display { font-family: 'Oxanium', sans-serif; }
+
+/* CARDS */
+.card {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: 18px;
+  transition: border-color .25s;
+}
+.card:hover { border-color: rgba(249,115,22,0.22); }
+.card-glow {
+  background: var(--grad-soft);
+  border: 1px solid rgba(124,58,237,0.2);
+  border-radius: 18px;
+}
+
+/* HEADER */
+.site-header {
+  background: linear-gradient(135deg, #0a0815 0%, #13082e 55%, #0f0a1a 100%);
+  border: 1px solid rgba(124,58,237,0.22);
+  border-radius: 20px;
+  padding: 18px 26px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  position: relative; overflow: hidden;
+}
+.site-header::after {
+  content: '';
+  position: absolute; top: 0; right: 0; width: 300px; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(249,115,22,0.04));
+  pointer-events: none;
+}
+.logo-wrap { display: flex; align-items: center; gap: 14px; }
+.logo-img { height: 40px; width: 40px; object-fit: contain; border-radius: 10px; background: white; padding: 3px; }
+.logo-text { font-family: 'Oxanium', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.logo-text span.orange { color: var(--c-orange); }
+.logo-text span.white { color: white; }
+.logo-sub { font-size: 11px; color: var(--c-muted); margin-top: 1px; }
+
+/* SETUP PANEL */
+.setup-panel {
+  background: linear-gradient(145deg, #0d0d22 0%, #130828 60%, #0c0d22 100%);
+  border: 1px solid rgba(124,58,237,0.2);
+  border-radius: 22px;
+  padding: 44px;
+  position: relative; overflow: hidden;
+}
+.setup-panel::before {
+  content: '';
+  position: absolute; top: -80px; right: -80px;
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(249,115,22,0.09) 0%, transparent 70%);
+  pointer-events: none;
+}
+.setup-panel::after {
+  content: '';
+  position: absolute; bottom: -60px; left: -40px;
+  width: 240px; height: 240px;
+  background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.setup-inner { position: relative; z-index: 1; }
+
+/* INPUTS */
+.field-label {
+  font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--c-muted); margin-bottom: 8px; display: block;
+}
+.input-styled {
+  width: 100%;
+  background: rgba(10,10,25,0.85);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 11px; padding: 12px 15px;
+  color: var(--c-text); font-size: 14px; font-family: 'DM Sans', sans-serif;
+  outline: none; transition: border-color .2s, box-shadow .2s;
+}
+.input-styled:focus { border-color: var(--c-orange); box-shadow: 0 0 0 3px rgba(249,115,22,0.12); }
+.input-styled::placeholder { color: var(--c-muted); }
+
+.select-styled {
+  background: rgba(10,10,25,0.85);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 11px; padding: 12px 15px;
+  color: var(--c-text); font-size: 13px; font-family: 'DM Sans', sans-serif;
+  outline: none; cursor: pointer; width: 100%;
+  transition: border-color .2s;
+}
+.select-styled:focus { border-color: var(--c-orange); }
+
+/* USERNAME TAGS */
+.user-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.3);
+  border-radius: 999px; padding: 5px 10px 5px 12px;
+  font-size: 13px; color: #fdba74; animation: tagIn .15s ease;
+}
+@keyframes tagIn { from { opacity:0;transform:scale(.88); } to { opacity:1;transform:scale(1); } }
+.user-tag button { background:none;border:none;color:#fb923c;cursor:pointer;font-size:14px;line-height:1;padding:0 2px; }
+.user-tag button:hover { color: var(--c-rose); }
+
+/* TIMEFRAME PILLS */
+.tf-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.tf-pill {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px; padding: 8px 16px;
+  font-size: 13px; color: var(--c-muted);
+  cursor: pointer; transition: all .2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.tf-pill:hover { border-color: rgba(249,115,22,0.3); color: var(--c-orange2); }
+.tf-pill.active {
+  background: rgba(249,115,22,0.14);
+  border-color: rgba(249,115,22,0.45);
+  color: var(--c-orange);
+  font-weight: 600;
+}
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  border: none; border-radius: 999px; font-weight: 600; font-size: 13px;
+  cursor: pointer; transition: all .2s; padding: 12px 26px;
+  font-family: 'DM Sans', sans-serif; white-space: nowrap;
+}
+.btn-run {
+  background: var(--grad);
+  color: white; box-shadow: 0 4px 24px rgba(249,115,22,0.3);
+  font-size: 14px; padding: 14px 36px;
+}
+.btn-run:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(249,115,22,0.4); }
+.btn-run:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.btn-ghost {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #94a3b8;
+}
+.btn-ghost:hover { border-color: rgba(249,115,22,0.3); color: var(--c-orange2); }
+.btn-pdf {
+  background: rgba(249,115,22,0.1);
+  border: 1px solid rgba(249,115,22,0.3);
+  color: var(--c-orange2);
+}
+.btn-pdf:hover { background: rgba(249,115,22,0.18); }
+
+/* PROGRESS */
+.progress-track { background: rgba(255,255,255,0.05); border-radius: 999px; height: 5px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 999px; background: var(--grad); transition: width .45s ease; }
+
+.step-dot {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; border: 2px solid; flex-shrink: 0; transition: all .3s;
+}
+.step-dot.pending  { border-color: rgba(255,255,255,0.1); color: var(--c-muted); background: transparent; }
+.step-dot.active   { border-color: var(--c-orange); color: var(--c-orange); background: rgba(249,115,22,0.12); animation: pdot 1.4s ease-in-out infinite; }
+.step-dot.done     { border-color: var(--c-emerald); color: var(--c-emerald); background: rgba(16,185,129,0.1); }
+.step-dot.error    { border-color: var(--c-rose); color: var(--c-rose); background: rgba(244,63,94,0.1); }
+@keyframes pdot { 0%,100%{box-shadow:0 0 0 0 rgba(249,115,22,0.4);}50%{box-shadow:0 0 0 7px rgba(249,115,22,0);} }
+
+/* KPI CARDS */
+.kpi { border-radius: 16px; padding: 22px; position: relative; overflow: hidden; }
+.kpi-val { font-family: 'Oxanium', sans-serif; font-size: 32px; font-weight: 700; line-height: 1; color: white; margin: 8px 0 4px; }
+.kpi-label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--c-muted); font-weight: 600; }
+.kpi-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+
+/* AI CARD */
+.ai-card {
+  background: linear-gradient(135deg, rgba(124,58,237,0.09) 0%, rgba(249,115,22,0.05) 100%);
+  border: 1px solid rgba(124,58,237,0.2);
+  border-radius: 18px; padding: 24px; position: relative;
+}
+.ai-card::before {
+  content: '';
+  position: absolute; left: 0; top: 16px; bottom: 16px;
+  width: 3px; border-radius: 3px; background: var(--grad);
+}
+.ai-inner {
+  background: rgba(8,8,20,0.6);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px; padding: 16px;
+}
+.rec-card {
+  background: linear-gradient(135deg, #160e2c, #0e0814);
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 12px; padding: 16px;
+}
+
+/* INSIGHT BOX */
+.insight {
+  background: rgba(124,58,237,0.06);
+  border: 1px solid rgba(124,58,237,0.15);
+  border-radius: 10px; padding: 12px 15px;
+  font-size: 12.5px; color: #94a3b8; line-height: 1.65; margin-top: 14px;
+}
+.insight strong { color: #c4b5fd; }
+.insight i { color: var(--c-orange); margin-right: 6px; }
+
+/* CHART LABELS */
+.chart-section-label { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--c-muted); margin-bottom: 4px; }
+.chart-title { font-family: 'Oxanium', sans-serif; font-size: 15px; font-weight: 600; color: var(--c-text); margin-bottom: 16px; }
+
+/* BADGES */
+.badge { display: inline-flex; align-items: center; gap: 7px; border-radius: 999px; padding: 5px 13px; font-size: 11px; font-weight: 600; }
+.badge-live { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: #34d399; }
+.badge-running { background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.3); color: var(--c-orange2); }
+.badge-error { background: rgba(244,63,94,0.12); border: 1px solid rgba(244,63,94,0.3); color: #fda4af; }
+.pulse-green { width: 6px; height: 6px; border-radius: 50%; background: #34d399; animation: pg 2s infinite; }
+.pulse-orange { width: 6px; height: 6px; border-radius: 50%; background: var(--c-orange); animation: po 1s infinite; }
+@keyframes pg { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);} }
+@keyframes po { 0%,100%{opacity:1;}50%{opacity:.3;} }
+
+/* DIVIDER */
+.divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(249,115,22,0.2), rgba(124,58,237,0.2), transparent); margin: 0; }
+
+/* GRID */
+.grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+.grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+@media(max-width:900px){.grid-2,.grid-3,.grid-4,.grid-1-2{grid-template-columns:1fr;}}
+@media(max-width:640px){.setup-panel{padding:24px;}}
+
+/* ANIMATIONS */
+.fade-in { animation: fadeIn .4s ease forwards; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);} }
+.spin { animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* TOAST */
+#toast {
+  position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+  background: #13132a; border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px; padding: 14px 18px;
+  font-size: 13px; color: var(--c-text);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  transform: translateY(80px); opacity: 0;
+  transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  max-width: 340px;
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+#toast.error { border-color: rgba(244,63,94,0.4); }
+#toast.success { border-color: rgba(249,115,22,0.4); }
+
+/* PRINT */
+@media print {
+  @page { margin: 1.2cm; }
+  body { background: white !important; color: #1e293b !important; }
+  body::before, body::after { display: none !important; }
+  .site-header { background: #7c3aed !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; border: none !important; }
+  .logo-text span { color: white !important; }
+  .card,.card-glow,.kpi,.ai-card,.ai-inner,.rec-card,.setup-panel,.insight {
+    background: white !important; border: 1px solid #e2e8f0 !important; color: #1e293b !important;
+    box-shadow: none !important; break-inside: avoid; page-break-inside: avoid;
+  }
+  .print-hidden { display: none !important; }
+  canvas { max-height: 240px !important; }
+  h1,h2,h3,h4,.logo-text,.kpi-val,.chart-title,.font-display { color: #1e293b !important; }
+  .kpi-label,.chart-section-label,.field-label { color: #64748b !important; }
+  p,span,li,.insight { color: #374151 !important; }
+  .insight strong { color: #7c3aed !important; }
+}
+
+/* RANGE INPUT */
+input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 5px; border-radius: 5px; background: rgba(255,255,255,0.1); outline: none; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--c-orange); cursor: pointer; border: 2px solid var(--c-bg); box-shadow: 0 2px 8px rgba(249,115,22,0.4); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══ HEADER ══ -->
+  <header class="site-header">
+    <div class="logo-wrap">
+      <img src="https://images.glints.com/unsafe/glints-dashboard.oss-ap-southeast-1.aliyuncs.com/company-logo/9a8b8496cde4c7c28571b7c676819468.png"
+           alt="Clabstream" class="logo-img" onerror="this.style.display='none'">
+      <div>
+        <div class="logo-text"><span class="orange">Clab</span><span class="white">stream</span></div>
+        <div class="logo-sub" id="headerSub">TikTok Profile Intelligence · Automated Analytics</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;" class="print-hidden">
+      <span id="statusBadge" class="badge badge-running" style="display:none;">
+        <span class="pulse-orange"></span><span id="statusText">Running…</span>
+      </span>
+      <button onclick="window.print()" id="pdfBtn" class="btn btn-pdf" style="display:none;">
+        <i class="fa-solid fa-file-pdf"></i> Export PDF
+      </button>
+      <button onclick="resetToSetup()" id="resetBtn" class="btn btn-ghost" style="display:none;">
+        <i class="fa-solid fa-rotate-right"></i> New Run
+      </button>
+    </div>
+  </header>
+
+  <!-- ══ SETUP PANEL ══ -->
+  <div id="setupPanel" class="setup-panel fade-in">
+    <div class="setup-inner">
+      <!-- Title -->
+      <div style="margin-bottom:34px;">
+        <div class="font-display" style="font-family:'Oxanium',sans-serif;font-size:28px;font-weight:800;margin-bottom:10px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">
+          Configure Your Analysis
+        </div>
+        <p style="color:var(--c-muted);font-size:14px;max-width:560px;line-height:1.65;">Enter TikTok usernames to track, select your timeframe, and set the result limit. Clabstream will automatically scrape, process, and render your analytics dashboard.</p>
+      </div>
+
+      <!-- Username input -->
+      <div style="margin-bottom:28px;">
+        <label class="field-label"><i class="fa-brands fa-tiktok" style="margin-right:6px;color:var(--c-orange);"></i> TikTok Usernames to Track</label>
+        <div style="display:flex;gap:10px;margin-bottom:10px;">
+          <div style="position:relative;flex:1;">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--c-muted);font-size:14px;">@</span>
+            <input type="text" id="usernameInput" class="input-styled" placeholder="username (no @ needed)" style="padding-left:32px;" onkeydown="if(event.key==='Enter'||event.key===','){e.preventDefault?.();addUsername();}">
+          </div>
+          <button onclick="addUsername()" class="btn btn-ghost" style="flex-shrink:0;">
+            <i class="fa-solid fa-plus"></i> Add
+          </button>
+        </div>
+        <div id="usernameTags" style="display:flex;flex-wrap:wrap;gap:8px;min-height:34px;align-items:center;">
+          <span style="font-size:12px;color:var(--c-muted);font-style:italic;" id="noUsernamesHint">No usernames added yet.</span>
+        </div>
+      </div>
+
+      <!-- Timeframe + Max Results -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:32px;">
+
+        <!-- Timeframe -->
+        <div>
+          <label class="field-label"><i class="fa-regular fa-calendar" style="margin-right:6px;color:var(--c-purple2);"></i> Timeframe</label>
+          <div class="tf-grid" style="margin-bottom:12px;">
+            <button class="tf-pill active" data-days="7"  onclick="selectPreset(7)">Last 7d</button>
+            <button class="tf-pill" data-days="30" onclick="selectPreset(30)">Last 30d</button>
+            <button class="tf-pill" data-days="90" onclick="selectPreset(90)">Last 90d</button>
+            <button class="tf-pill" data-days="180" onclick="selectPreset(180)">Last 6mo</button>
+            <button class="tf-pill" data-days="365" onclick="selectPreset(365)">Last 1yr</button>
+            <button class="tf-pill" data-days="0" onclick="selectPreset(0)">All time</button>
+            <button class="tf-pill" data-days="-1" onclick="selectCustom()">Custom…</button>
+          </div>
+          <div id="customDatesWrap" style="display:none;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div>
+              <label class="field-label" style="margin-bottom:5px;">From</label>
+              <input type="date" id="dateFrom" class="input-styled" style="padding:10px 12px;">
+            </div>
+            <div>
+              <label class="field-label" style="margin-bottom:5px;">To</label>
+              <input type="date" id="dateTo" class="input-styled" style="padding:10px 12px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Max results -->
+        <div>
+          <label class="field-label"><i class="fa-solid fa-database" style="margin-right:6px;color:var(--c-orange);"></i> Max Results Per Username</label>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
+            <input type="range" id="maxResultsRange" min="10" max="500" value="50" oninput="document.getElementById('maxResultsVal').textContent=this.value">
+            <span id="maxResultsVal" style="font-family:'Oxanium',sans-serif;font-size:22px;font-weight:700;color:var(--c-orange);min-width:44px;text-align:right;">50</span>
+          </div>
+          <p style="font-size:12px;color:var(--c-muted);line-height:1.5;">Higher limits = longer scrape times. For quick snapshots use 25–50; for deep analysis use 100–200.</p>
+
+          <div style="margin-top:18px;">
+            <label class="field-label"><i class="fa-solid fa-gauge-high" style="margin-right:6px;color:var(--c-purple2);"></i> Sort Results By</label>
+            <select id="sortBy" class="select-styled">
+              <option value="latest">Latest posts first</option>
+              <option value="popular">Most popular first</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <button onclick="startScrape()" id="runBtn" class="btn btn-run">
+          <i class="fa-solid fa-bolt"></i> Run Analysis
+        </button>
+        <button onclick="loadDemoData()" class="btn btn-ghost">
+          <i class="fa-solid fa-flask"></i> Try Demo Data
+        </button>
+        <p style="font-size:12px;color:var(--c-muted);">Analysis takes 30–120 sec depending on username count &amp; result limit.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PROGRESS PANEL ══ -->
+  <div id="progressPanel" style="display:none;" class="card fade-in">
+    <div style="padding:36px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div class="font-display" style="font-family:'Oxanium',sans-serif;font-size:20px;font-weight:700;">Running Pipeline</div>
+          <p id="progressMsg" style="font-size:13px;color:var(--c-muted);margin-top:3px;">Initializing…</p>
+        </div>
+        <span id="progressPct" style="font-family:'Oxanium',sans-serif;font-size:36px;font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">0%</span>
+      </div>
+      <div class="progress-track" style="margin-bottom:30px;">
+        <div class="progress-fill" id="progressBar" style="width:0%"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;" id="stepsList"></div>
+    </div>
+  </div>
+
+  <!-- ══ DASHBOARD ══ -->
+  <div id="dashboardPanel" style="display:none;">
+
+    <!-- Filter Bar -->
+    <div class="card fade-in" style="padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-muted);margin-bottom:3px;">Active View</div>
+        <div class="font-display" style="font-family:'Oxanium',sans-serif;font-size:16px;font-weight:600;" id="activeViewLabel">All Profiles — Overview</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;" class="print-hidden">
+        <select id="profileFilter" class="select-styled" style="min-width:220px;" onchange="updateDashboard()">
+          <option value="all">All Profiles (Overview)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- AI Readout -->
+    <div class="ai-card fade-in">
+      <div style="padding-left:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,rgba(249,115,22,.2),rgba(124,58,237,.15));border:1px solid rgba(249,115,22,.25);display:flex;align-items:center;justify-content:center;">
+              <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--c-orange);font-size:14px;"></i>
+            </div>
+            <div>
+              <div class="font-display" style="font-family:'Oxanium',sans-serif;font-size:15px;font-weight:700;">AI Quick Readout</div>
+              <div style="font-size:11px;color:var(--c-muted);"><span id="insight-total-posts">0</span> posts analyzed</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--c-muted);background:rgba(255,255,255,0.04);border:1px solid var(--c-border);padding:7px 13px;border-radius:9px;">
+            <i class="fa-regular fa-calendar" style="margin-right:5px;color:var(--c-orange);"></i>
+            <span id="insight-date-start">–</span> → <span id="insight-date-end">–</span>
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="ai-inner">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-muted);margin-bottom:12px;"><i class="fa-solid fa-clock" style="color:#60a5fa;margin-right:5px;"></i>Timing Sweet Spots</div>
+            <div style="font-size:13px;display:flex;flex-direction:column;gap:9px;">
+              <div style="display:flex;justify-content:space-between;"><span style="color:#94a3b8;">Peak Reach Hour</span><strong style="color:var(--c-orange2);"><span id="insight-reach-hour">–</span>:00</strong></div>
+              <div style="font-size:11px;color:var(--c-muted);">~<span id="insight-reach-val">0</span> median plays</div>
+              <div style="display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,.05);padding-top:9px;"><span style="color:#94a3b8;">Peak Efficiency</span><strong style="color:var(--c-purple2);"><span id="insight-eng-val1">–</span>:00</strong></div>
+              <div style="font-size:11px;color:var(--c-muted);">~<span id="insight-eng-rate1">0</span> interactions/1k plays</div>
+            </div>
+          </div>
+          <div class="ai-inner">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-muted);margin-bottom:12px;"><i class="fa-solid fa-chart-line" style="color:#34d399;margin-right:5px;"></i>Play Distribution</div>
+            <div style="font-size:13px;display:flex;flex-direction:column;gap:9px;">
+              <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:9px;"><span style="color:#94a3b8;">Median (typical)</span><strong style="font-size:20px;font-family:'Oxanium',sans-serif;color:white;">~<span id="insight-median-plays">0</span></strong></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:#94a3b8;">Top 10% (P90)</span><strong style="font-size:20px;font-family:'Oxanium',sans-serif;color:#34d399;">~<span id="insight-p90-plays">0</span></strong></div>
+              <div style="font-size:11px;color:var(--c-muted);font-style:italic;">Viral outliers can skew averages.</div>
+            </div>
+          </div>
+          <div class="rec-card">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-orange);margin-bottom:10px;"><i class="fa-solid fa-bolt" style="color:var(--c-amber);margin-right:5px;"></i>Recommended Action</div>
+            <p style="font-size:13px;color:#cbd5e1;line-height:1.65;">Post at <strong id="insight-reach-hour3" style="color:white;">–:00</strong> for maximum raw reach. Prioritize <strong id="insight-eng-hours2" style="color:white;">–:00</strong> when engagement efficiency matters most.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Comparison (multi-user) -->
+    <div id="profileComparisonContainer" class="card fade-in" style="padding:24px;display:none;">
+      <div class="chart-section-label">Overview</div>
+      <div class="chart-title">Profile Comparison — Total Likes</div>
+      <div style="position:relative;height:240px;"><canvas id="profileComparisonChart"></canvas></div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="grid-4 fade-in">
+      <div class="kpi card">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div class="kpi-label">Total Videos</div>
+          <div class="kpi-icon" style="background:rgba(249,115,22,.14);"><i class="fa-solid fa-video" style="color:var(--c-orange);"></i></div>
+        </div>
+        <div class="kpi-val" id="kpi-videos">–</div>
+      </div>
+      <div class="kpi card">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div class="kpi-label">Total Likes</div>
+          <div class="kpi-icon" style="background:rgba(244,63,94,.14);"><i class="fa-solid fa-heart" style="color:var(--c-rose);"></i></div>
+        </div>
+        <div class="kpi-val" id="kpi-likes">–</div>
+      </div>
+      <div class="kpi card">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div class="kpi-label">Total Comments</div>
+          <div class="kpi-icon" style="background:rgba(16,185,129,.14);"><i class="fa-solid fa-comment" style="color:var(--c-emerald);"></i></div>
+        </div>
+        <div class="kpi-val" id="kpi-comments">–</div>
+      </div>
+      <div class="kpi card">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div class="kpi-label">Total Saves</div>
+          <div class="kpi-icon" style="background:rgba(124,58,237,.14);"><i class="fa-solid fa-bookmark" style="color:var(--c-purple2);"></i></div>
+        </div>
+        <div class="kpi-val" id="kpi-saves">–</div>
+      </div>
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="grid-2 fade-in">
+      <div class="card" style="padding:24px;">
+        <div class="chart-section-label">Top Posts</div>
+        <div class="chart-title">Best Performing Videos by Likes</div>
+        <div style="position:relative;height:250px;"><canvas id="topPostsChart"></canvas></div>
+        <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-topPosts">Waiting for data.</span></div>
+      </div>
+      <div class="card" style="padding:24px;">
+        <div class="chart-section-label">Efficiency Trend</div>
+        <div class="chart-title">Avg Engagement Per Post (Timeline)</div>
+        <div style="position:relative;height:250px;"><canvas id="engPerPostChart"></canvas></div>
+        <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-engPerPost">Waiting for data.</span></div>
+      </div>
+    </div>
+
+    <!-- Charts Row 2 -->
+    <div class="grid-1-2 fade-in">
+      <div class="card" style="padding:24px;">
+        <div class="chart-section-label">Interaction Mix</div>
+        <div class="chart-title">Engagement Split</div>
+        <div style="position:relative;height:230px;"><canvas id="engagementPieChart"></canvas></div>
+        <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-pie">Waiting for data.</span></div>
+      </div>
+      <div class="card" style="padding:24px;">
+        <div class="chart-section-label">Weekly Pattern</div>
+        <div class="chart-title">Engagement by Day of Week</div>
+        <div style="position:relative;height:230px;"><canvas id="dayOfWeekChart"></canvas></div>
+        <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-day">Waiting for data.</span></div>
+      </div>
+    </div>
+
+    <!-- Charts Row 3 -->
+    <div class="grid-2 fade-in">
+      <div class="card" style="padding:24px;">
+        <div class="chart-section-label">Content Strategy</div>
+        <div class="chart-title">Top Hashtags Used</div>
+        <div style="position:relative;height:250px;"><canvas id="hashtagChart"></canvas></div>
+        <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-hashtag">Waiting for data.</span></div>
+      </div>
+      <div class="card" style="padding:24px;">
+        <div class="chart-section-label">Hourly Heatmap</div>
+        <div class="chart-title">Posts by Hour of Day</div>
+        <div style="position:relative;height:250px;"><canvas id="hourChart"></canvas></div>
+        <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-hour">Waiting for data.</span></div>
+      </div>
+    </div>
+
+    <!-- Timeline (full width) -->
+    <div class="card fade-in" style="padding:24px;">
+      <div class="chart-section-label">Campaign Performance</div>
+      <div class="chart-title">Likes Over Time</div>
+      <div style="position:relative;height:290px;"><canvas id="timelineChart"></canvas></div>
+      <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-timeline">Waiting for data.</span></div>
+    </div>
+
+    <!-- Play Rate Chart -->
+    <div class="card fade-in" style="padding:24px;">
+      <div class="chart-section-label">Reach Performance</div>
+      <div class="chart-title">Play Count Distribution Over Time</div>
+      <div style="position:relative;height:250px;"><canvas id="playsTimelineChart"></canvas></div>
+      <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-plays">Waiting for data.</span></div>
+    </div>
+
+  </div><!-- /dashboardPanel -->
+
+  <div id="toast"></div>
+</div><!-- /wrap -->
+
+<script>
+/* ══════════════════════════════════
+   CONFIG (backend token — hidden from user)
+══════════════════════════════════ */
+const APIFY_TOKEN = 'apify_api_IwI1HxZ4bSkSoDCEocMIPAUewRySm30CgoK5';
+const ACTOR_ID    = 'clockworks~tiktok-scraper'; // ~ is valid in URLs per RFC3986
+const APIFY_BASE  = 'https://api.apify.com/v2';
+const POLL_MS     = 5000;
+
+/* Shared fetch wrapper — always attaches token as both query param AND
+   Authorization header, sets CORS mode, and surfaces readable errors. */
+async function apifyFetch(path, options = {}) {
+  const url = `${APIFY_BASE}${path}${path.includes('?') ? '&' : '?'}token=${APIFY_TOKEN}`;
+  const res = await fetch(url, {
+    mode: 'cors',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${APIFY_TOKEN}`,
+      ...(options.headers || {}),
+    },
+  });
+
+  if (!res.ok) {
+    let msg = `HTTP ${res.status}`;
+    try {
+      const body = await res.json();
+      msg = body?.error?.message || body?.message || msg;
+    } catch (_) {}
+    throw new Error(`Apify API error: ${msg}`);
+  }
+  return res.json();
+}
+
+/* ══════════════════════════════════
+   STATE
+══════════════════════════════════ */
+let globalData = [];
+let usernames  = [];
+let selectedDays = 7;
+let customFrom = null;
+let customTo   = null;
+let chartInstances = {};
+let pollTimer  = null;
+
+/* ══════════════════════════════════
+   STEPS
+══════════════════════════════════ */
+const STEPS = [
+  { id:'s1', label:'Start Apify Actor Run',       detail:'Sending request to TikTok scraper actor.' },
+  { id:'s2', label:'Scraping TikTok Profiles',    detail:'Polling run status every 5 seconds.' },
+  { id:'s3', label:'Download Dataset',            detail:'Fetching scraped posts as JSON.' },
+  { id:'s4', label:'Filter & Normalize Data',     detail:'Applying date range and normalizing fields.' },
+  { id:'s5', label:'Render Dashboard',            detail:'Building charts and AI insights.' },
+];
+function renderSteps(activeId, doneIds=[], errorIds=[]) {
+  document.getElementById('stepsList').innerHTML = STEPS.map(s => {
+    let cls = 'pending', icon = s.id.replace('s','');
+    if (doneIds.includes(s.id))  { cls='done';  icon='<i class="fa-solid fa-check" style="font-size:10px;"></i>'; }
+    if (activeId===s.id)         { cls='active'; icon='<i class="fa-solid fa-circle-notch spin" style="font-size:11px;"></i>'; }
+    if (errorIds.includes(s.id)) { cls='error';  icon='<i class="fa-solid fa-xmark" style="font-size:11px;"></i>'; }
+    const color = cls==='done'?'#34d399':cls==='active'?'var(--c-orange2)':cls==='error'?'#fda4af':'#475569';
+    return `<div style="display:flex;align-items:flex-start;gap:14px;">
+      <div class="step-dot ${cls}">${icon}</div>
+      <div style="padding-top:3px;">
+        <div style="font-size:13px;font-weight:600;color:${color};">${s.label}</div>
+        <div style="font-size:11px;color:#475569;margin-top:2px;">${s.detail}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function setProgress(pct, msg, active, done=[], errors=[]) {
+  document.getElementById('progressBar').style.width = pct+'%';
+  document.getElementById('progressPct').textContent = pct+'%';
+  document.getElementById('progressMsg').textContent = msg;
+  renderSteps(active, done, errors);
+}
+
+/* ══════════════════════════════════
+   TIMEFRAME SELECTOR
+══════════════════════════════════ */
+function selectPreset(days) {
+  selectedDays = days;
+  customFrom = customTo = null;
+  document.querySelectorAll('.tf-pill').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.tf-pill[data-days="${days}"]`)?.classList.add('active');
+  document.getElementById('customDatesWrap').style.display = 'none';
+}
+function selectCustom() {
+  selectedDays = -1;
+  document.querySelectorAll('.tf-pill').forEach(p => p.classList.remove('active'));
+  document.querySelector('.tf-pill[data-days="-1"]').classList.add('active');
+  const wrap = document.getElementById('customDatesWrap');
+  wrap.style.display = 'grid';
+  // Set defaults
+  const to = new Date(); const from = new Date(); from.setDate(from.getDate()-30);
+  document.getElementById('dateFrom').value = from.toISOString().split('T')[0];
+  document.getElementById('dateTo').value   = to.toISOString().split('T')[0];
+}
+function getDateFilter() {
+  if (selectedDays === -1) {
+    customFrom = document.getElementById('dateFrom').value ? new Date(document.getElementById('dateFrom').value) : null;
+    customTo   = document.getElementById('dateTo').value   ? new Date(document.getElementById('dateTo').value)   : null;
+    if (customTo) customTo.setHours(23,59,59);
+    return { from: customFrom, to: customTo };
+  }
+  if (selectedDays === 0) return { from: null, to: null };
+  const to = new Date(); const from = new Date();
+  from.setDate(from.getDate() - selectedDays);
+  return { from, to };
+}
+
+/* ══════════════════════════════════
+   USERNAME MANAGEMENT
+══════════════════════════════════ */
+function addUsername() {
+  const inp = document.getElementById('usernameInput');
+  let val = inp.value.trim().replace(/^@/, '').replace(/,+$/, '').trim();
+  if (!val || usernames.includes(val)) { inp.value=''; return; }
+  usernames.push(val); inp.value=''; renderUsernames();
+}
+function removeUsername(u) { usernames = usernames.filter(x=>x!==u); renderUsernames(); }
+function renderUsernames() {
+  const c = document.getElementById('usernameTags');
+  if (!usernames.length) {
+    c.innerHTML='<span style="font-size:12px;color:var(--c-muted);font-style:italic;" id="noUsernamesHint">No usernames added yet.</span>';
+    return;
+  }
+  c.innerHTML = usernames.map(u=>`<span class="user-tag">@${u}<button onclick="removeUsername('${u.replace(/'/g,"\\'")}')">×</button></span>`).join('');
+}
+document.getElementById('usernameInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter'||e.key===','){e.preventDefault();addUsername();}
+});
+
+/* ══════════════════════════════════
+   TOAST
+══════════════════════════════════ */
+let toastT = null;
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  const icon = type==='error'?'<i class="fa-solid fa-circle-exclamation" style="color:#f43f5e;margin-right:8px;"></i>'
+             : type==='success'?'<i class="fa-solid fa-circle-check" style="color:var(--c-orange);margin-right:8px;"></i>'
+             : '<i class="fa-solid fa-circle-info" style="color:var(--c-purple2);margin-right:8px;"></i>';
+  t.innerHTML = icon + msg;
+  t.className = `show ${type}`;
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>{ t.className=''; }, 4500);
+}
+
+/* ══════════════════════════════════
+   BADGE
+══════════════════════════════════ */
+function showBadge(type, msg) {
+  const b=document.getElementById('statusBadge'), t=document.getElementById('statusText');
+  b.style.display='inline-flex'; t.textContent=msg;
+  b.className='badge '+(type==='live'?'badge-live':type==='error'?'badge-error':'badge-running');
+  const first=b.querySelector('span:first-child'); if(first)first.remove();
+  const dot=document.createElement('span');
+  dot.className=type==='live'?'pulse-green':'pulse-orange';
+  b.prepend(dot);
+}
+
+/* ══════════════════════════════════
+   MAIN SCRAPE FLOW
+══════════════════════════════════ */
+async function startScrape() {
+  if (!usernames.length) { showToast('Add at least one TikTok username first.','error'); return; }
+  const maxResults = parseInt(document.getElementById('maxResultsRange').value) || 50;
+
+  document.getElementById('setupPanel').style.display='none';
+  document.getElementById('progressPanel').style.display='block';
+  document.getElementById('runBtn').disabled=true;
+  showBadge('running','Initializing…');
+  setProgress(5,'Starting Apify actor…','s1');
+
+  try {
+    /* STEP 1 — Start run */
+    const payload = buildInput(usernames, maxResults);
+    console.log('[Clabstream] Starting actor with payload:', JSON.stringify(payload, null, 2));
+
+    const runData = await apifyFetch(`/acts/${encodeURIComponent(ACTOR_ID)}/runs`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+
+    const runId = runData.data?.id;
+    if (!runId) throw new Error('No run ID returned from Apify. Actor may be misconfigured.');
+    console.log('[Clabstream] Run ID:', runId);
+
+    setProgress(15,`Run started (${runId.slice(0,8)}…). Scraping TikTok…`,'s2',['s1']);
+    showBadge('running','Scraping…');
+
+    /* STEP 2 — Poll until finished */
+    await pollUntilDone(runId);
+    setProgress(62,'Scrape complete! Downloading dataset…','s3',['s1','s2']);
+    showBadge('running','Downloading…');
+
+    /* STEP 3 — Download dataset */
+    const dsId = await getDatasetId(runId);
+    if (!dsId) throw new Error('No dataset ID found. The run may not have produced output.');
+    console.log('[Clabstream] Dataset ID:', dsId);
+
+    const items = await fetchDataset(dsId);
+    if (!items.length) throw new Error('0 posts returned. Try a larger Max Results value or verify the usernames exist on TikTok.');
+    console.log('[Clabstream] Downloaded items:', items.length);
+
+    setProgress(78,`Downloaded ${items.length} posts. Filtering & processing…`,'s4',['s1','s2','s3']);
+
+    /* STEP 4 — Filter & normalize */
+    const dateFilter = getDateFilter();
+    const normalized = normalizeData(items, usernames, dateFilter);
+    if (!normalized.length) throw new Error(`0 posts matched the selected timeframe. Try selecting "All time" or a wider date range.`);
+
+    setProgress(92,'Rendering dashboard…','s5',['s1','s2','s3','s4']);
+    await new Promise(r=>setTimeout(r,280));
+
+    /* STEP 5 — Render */
+    loadDashboard(normalized);
+    setProgress(100,'Done! Dashboard ready.',null,['s1','s2','s3','s4','s5']);
+    showBadge('live',`${normalized.length} posts`);
+    showToast(`✓ ${normalized.length} posts loaded for @${usernames.join(', @')}.`,'success');
+
+    await new Promise(r=>setTimeout(r,700));
+    document.getElementById('progressPanel').style.display='none';
+    document.getElementById('dashboardPanel').style.display='block';
+    document.getElementById('pdfBtn').style.display='inline-flex';
+    document.getElementById('resetBtn').style.display='inline-flex';
+    document.getElementById('headerSub').textContent=`${normalized.length} posts · @${usernames.join(', @')} · just scraped`;
+
+  } catch(err) {
+    console.error('[Clabstream] Error:', err);
+
+    // Friendly diagnosis for common errors
+    let friendlyMsg = err.message;
+    if (err.message.toLowerCase().includes('failed to fetch') ||
+        err.message.toLowerCase().includes('networkerror') ||
+        err.message.toLowerCase().includes('load failed')) {
+      friendlyMsg = 'Network error — could not reach Apify. Check your internet connection or try disabling browser extensions/VPN.';
+    } else if (err.message.includes('401') || err.message.toLowerCase().includes('unauthorized')) {
+      friendlyMsg = 'Invalid API token. Please check your Apify account has an active subscription.';
+    } else if (err.message.includes('402') || err.message.toLowerCase().includes('payment')) {
+      friendlyMsg = 'Apify account has insufficient compute units. Top up at console.apify.com.';
+    } else if (err.message.includes('429')) {
+      friendlyMsg = 'Rate limited by Apify. Wait a minute and try again.';
+    }
+
+    setProgress(0,`Error: ${friendlyMsg}`,null,[],['s1']);
+    showBadge('error','Failed');
+    showToast(friendlyMsg,'error');
+    document.getElementById('runBtn').disabled=false;
+    setTimeout(()=>{
+      document.getElementById('progressPanel').style.display='none';
+      document.getElementById('setupPanel').style.display='block';
+    },3500);
+  }
+}
+
+/* ══════════════════════════════════
+   BUILD ACTOR INPUT
+   clockworks~tiktok-scraper schema
+══════════════════════════════════ */
+function buildInput(usernames, maxResults) {
+  const sort = document.getElementById('sortBy').value;
+  return {
+    profiles: usernames.map(u => `https://www.tiktok.com/@${u}`),
+    resultsPerPage: Math.min(maxResults, 50),
+    maxResults: maxResults,
+    sortBy: sort === 'popular' ? 'mostLiked' : 'latest',
+    shouldDownloadVideos: false,
+    shouldDownloadCovers: false,
+    shouldDownloadSubtitles: false,
+    shouldDownloadSlideshowImages: false,
+    profilesPerQuery: usernames.length,
+  };
+}
+
+/* ══════════════════════════════════
+   POLLING
+══════════════════════════════════ */
+async function pollUntilDone(runId) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now(); let dots = 0;
+    async function check() {
+      if (Date.now()-start > 12*60*1000) { reject(new Error('Scrape timed out after 12 minutes.')); return; }
+      try {
+        const d = await apifyFetch(`/actor-runs/${runId}`);
+        const status = d.data?.status;
+        dots=(dots+1)%4;
+        const elapsed=Math.round((Date.now()-start)/1000);
+        document.getElementById('progressMsg').textContent=`Scraping TikTok${'.'.repeat(dots+1)} (${elapsed}s elapsed)`;
+        console.log('[Clabstream] Run status:', status);
+        if (status==='SUCCEEDED') { resolve(); return; }
+        if (['FAILED','ABORTED','TIMED-OUT'].includes(status)) {
+          reject(new Error(`Apify run ended with status: ${status}. Check console.apify.com for details.`)); return;
+        }
+        pollTimer=setTimeout(check, POLL_MS);
+      } catch(e) { reject(e); }
+    }
+    check();
+  });
+}
+
+/* ══════════════════════════════════
+   FETCH DATASET
+══════════════════════════════════ */
+async function getDatasetId(runId) {
+  const d = await apifyFetch(`/actor-runs/${runId}`);
+  return d.data?.defaultDatasetId;
+}
+async function fetchDataset(datasetId) {
+  const d = await apifyFetch(`/datasets/${datasetId}/items?format=json&clean=true&limit=50000`);
+  // Apify can return an array directly or wrap it in { data: { items: [] } }
+  if (Array.isArray(d)) return d;
+  if (Array.isArray(d?.items)) return d.items;
+  if (Array.isArray(d?.data?.items)) return d.data.items;
+  return [];
+}
+
+/* ══════════════════════════════════
+   NORMALIZE DATA
+══════════════════════════════════ */
+function normalizeData(items, usernames, dateFilter) {
+  const results = [];
+  for (const item of items) {
+    // Extract author
+    const authorId   = item.authorMeta?.name || item.author?.uniqueId || item.uniqueId || '';
+    const authorNick = item.authorMeta?.nickName || item.author?.nickname || item.authorMeta?.name || '';
+
+    // Match to a requested username
+    let matchedUser = '';
+    for (const u of usernames) {
+      if (authorId.toLowerCase()===u.toLowerCase() ||
+          authorNick.toLowerCase()===u.toLowerCase() ||
+          (item.webVideoUrl||'').includes('/'+u+'/')) {
+        matchedUser=u; break;
+      }
+    }
+    if (!matchedUser) matchedUser = authorId || usernames[0] || 'Unknown';
+
+    // Parse date
+    let createDate = null;
+    if (item.createTimeISO) createDate = new Date(item.createTimeISO);
+    else if (item.createTime) createDate = new Date(Number(item.createTime)*1000);
+
+    // Apply date filter
+    if (dateFilter.from && createDate && createDate < dateFilter.from) continue;
+    if (dateFilter.to   && createDate && createDate > dateFilter.to)   continue;
+
+    // Flatten hashtags
+    const hashtagFields = {};
+    (item.hashtags||[]).forEach((h,i) => {
+      hashtagFields[`hashtags/${i}/name`] = h.name||h;
+    });
+
+    // Video description snippet (for tooltip/title)
+    const desc = (item.desc||item.text||'').slice(0,80);
+
+    results.push({
+      profile:       matchedUser,
+      diggCount:     item.diggCount    ?? item.stats?.diggCount    ?? 0,
+      commentCount:  item.commentCount ?? item.stats?.commentCount ?? 0,
+      collectCount:  item.collectCount ?? item.stats?.collectCount ?? 0,
+      shareCount:    item.shareCount   ?? item.stats?.shareCount   ?? 0,
+      playCount:     item.playCount    ?? item.stats?.playCount    ?? 0,
+      createTimeISO: createDate ? createDate.toISOString() : '',
+      'authorMeta/name':     authorId,
+      'authorMeta/nickName': authorNick,
+      desc,
+      ...hashtagFields,
+    });
+  }
+  return results;
+}
+
+/* ══════════════════════════════════
+   DASHBOARD ENGINE
+══════════════════════════════════ */
+function loadDashboard(data) {
+  globalData = data;
+  populateFilter(data);
+  updateDashboard();
+}
+function populateFilter(data) {
+  const select = document.getElementById('profileFilter');
+  select.innerHTML='<option value="all">All Profiles (Overview)</option>';
+  [...new Set(data.map(r=>r.profile).filter(Boolean))].sort()
+    .forEach(u=>{ const o=document.createElement('option'); o.value=u; o.textContent='@'+u; select.appendChild(o); });
+}
+function updateDashboard() {
+  const sel = document.getElementById('profileFilter').value;
+  document.getElementById('activeViewLabel').textContent = sel==='all'?'All Profiles — Overview':'@'+sel;
+  const filtered = sel==='all' ? globalData : globalData.filter(r=>r.profile===sel);
+  const uniq = [...new Set(globalData.map(r=>r.profile).filter(Boolean))];
+  if (sel==='all' && uniq.length>1) {
+    document.getElementById('profileComparisonContainer').style.display='block';
+    renderProfileComparison(globalData);
+  } else {
+    document.getElementById('profileComparisonContainer').style.display='none';
+  }
+  processData(filtered);
+  generateInsights(filtered);
+}
+
+/* ══════════════════════════════════
+   HELPERS
+══════════════════════════════════ */
+function parseDate(v) {
+  if (!v) return null; if (!isNaN(v)){const n=Number(v);return new Date(n.toString().length===10?n*1000:n);}
+  const d=new Date(v); return isNaN(d)?null:d;
+}
+function fmt(n) {
+  if (n>=1e9) return (n/1e9).toFixed(2)+'B';
+  if (n>=1e6) return (n/1e6).toFixed(1)+'M';
+  if (n>=1e3) return (n/1e3).toFixed(1)+'K';
+  return Math.round(n).toLocaleString();
+}
+function percentile(arr,p) {
+  if(!arr.length)return 0;
+  const s=[...arr].sort((a,b)=>a-b),i=(s.length-1)*p,lo=Math.floor(i),hi=lo+1;
+  return hi>=s.length?s[lo]:s[lo]*(1-(i%1))+s[hi]*(i%1);
+}
+function destroyChart(id){if(chartInstances[id]){chartInstances[id].destroy();delete chartInstances[id];}}
+
+const CHART_OPTS = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{legend:{display:false}},
+  scales:{
+    y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b7280',font:{size:11}}},
+    x:{grid:{display:false},ticks:{color:'#6b7280',font:{size:11},maxRotation:30}}
+  }
+};
+const PALETTE=[
+  'rgba(249,115,22,.85)','rgba(124,58,237,.85)','rgba(251,146,60,.85)','rgba(168,85,247,.85)',
+  'rgba(34,211,238,.8)','rgba(244,63,94,.8)','rgba(16,185,129,.8)','rgba(251,191,36,.8)',
+  'rgba(167,139,250,.8)','rgba(94,234,212,.8)'
+];
+
+/* ══════════════════════════════════
+   INSIGHTS
+══════════════════════════════════ */
+function generateInsights(data) {
+  if(!data.length)return;
+  document.getElementById('insight-total-posts').textContent=data.length;
+  const dates=data.map(r=>parseDate(r.createTimeISO)).filter(Boolean);
+  if(dates.length){
+    document.getElementById('insight-date-start').textContent=new Date(Math.min(...dates)).toISOString().split('T')[0];
+    document.getElementById('insight-date-end').textContent=new Date(Math.max(...dates)).toISOString().split('T')[0];
+  }
+  const hourly={},allPlays=[];
+  data.forEach(row=>{
+    const plays=Number(row.playCount||0),likes=Number(row.diggCount||0),
+          comments=Number(row.commentCount||0),saves=Number(row.collectCount||0),shares=Number(row.shareCount||0);
+    allPlays.push(plays);
+    const d=parseDate(row.createTimeISO);
+    const h=d?d.getHours().toString().padStart(2,'0'):'00';
+    if(!hourly[h])hourly[h]={plays:[],eng:[]};
+    hourly[h].plays.push(plays);
+    hourly[h].eng.push(plays>0?(likes+comments+saves+shares)/(plays/1000):0);
+  });
+  document.getElementById('insight-median-plays').textContent=fmt(percentile(allPlays,.5));
+  document.getElementById('insight-p90-plays').textContent=fmt(percentile(allPlays,.9));
+  let bestH='–',bestMed=0; const engH=[];
+  for(const h in hourly){
+    const med=percentile(hourly[h].plays,.5);
+    if(med>=bestMed){bestMed=med;bestH=h;}
+    engH.push({h,rate:percentile(hourly[h].eng,.5)});
+  }
+  engH.sort((a,b)=>b.rate-a.rate);
+  ['insight-reach-hour','insight-reach-hour3'].forEach(id=>document.getElementById(id).textContent=bestH);
+  document.getElementById('insight-reach-val').textContent=fmt(bestMed);
+  const eH=engH[0]?.h||'–';
+  ['insight-eng-val1','insight-eng-hours2'].forEach(id=>document.getElementById(id).textContent=eH);
+  document.getElementById('insight-eng-rate1').textContent=(engH[0]?.rate||0).toFixed(2);
+}
+
+/* ══════════════════════════════════
+   PROCESS DATA
+══════════════════════════════════ */
+function processData(data) {
+  let likes=0,comments=0,saves=0;
+  const timeSt={},hashSt={},daysSt={},engPP={},hourSt={},playsSt={};
+  const DA=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  DA.forEach(d=>{daysSt[d]=0;});
+  const topPosts=[];
+  data.forEach(row=>{
+    const l=Number(row.diggCount||0),c=Number(row.commentCount||0),
+          s=Number(row.collectCount||0),p=Number(row.playCount||0);
+    likes+=l; comments+=c; saves+=s;
+    topPosts.push({desc:row.desc||'(no description)',likes:l,plays:p});
+    const d=parseDate(row.createTimeISO);
+    if(d){
+      const ds=d.toISOString().split('T')[0];
+      timeSt[ds]=(timeSt[ds]||0)+l;
+      playsSt[ds]=(playsSt[ds]||0)+p;
+      if(!engPP[ds])engPP[ds]={likes:0,count:0};
+      engPP[ds].likes+=l; engPP[ds].count+=1;
+      daysSt[DA[d.getDay()]]+=l;
+      const h=d.getHours().toString().padStart(2,'0');
+      hourSt[h]=(hourSt[h]||0)+1;
+    }
+    for(const k in row){
+      if(k.startsWith('hashtags/')&&k.endsWith('/name')&&row[k])
+        hashSt[row[k].toLowerCase()]=(hashSt[row[k].toLowerCase()]||0)+1;
+    }
+  });
+  document.getElementById('kpi-videos').textContent=fmt(data.length);
+  document.getElementById('kpi-likes').textContent=fmt(likes);
+  document.getElementById('kpi-comments').textContent=fmt(comments);
+  document.getElementById('kpi-saves').textContent=fmt(saves);
+  renderTopPosts(topPosts);
+  renderPie(likes,comments,saves);
+  renderTimeline(timeSt);
+  renderPlaysTimeline(playsSt);
+  renderHashtags(hashSt);
+  renderDays(daysSt);
+  renderEngPP(engPP);
+  renderHours(hourSt);
+}
+
+/* ══════════════════════════════════
+   CHART RENDERERS
+══════════════════════════════════ */
+function renderProfileComparison(data) {
+  destroyChart('profileComparisonChart');
+  const totals={};
+  data.forEach(r=>{totals[r.profile]=(totals[r.profile]||0)+Number(r.diggCount||0);});
+  const sorted=Object.entries(totals).sort((a,b)=>b[1]-a[1]);
+  const ctx=document.getElementById('profileComparisonChart').getContext('2d');
+  chartInstances['profileComparisonChart']=new Chart(ctx,{type:'bar',data:{
+    labels:sorted.map(e=>'@'+e[0]),
+    datasets:[{label:'Total Likes',data:sorted.map(e=>e[1]),backgroundColor:sorted.map((_,i)=>PALETTE[i%PALETTE.length]),borderRadius:8}]
+  },options:{...CHART_OPTS}});
+}
+
+function renderTopPosts(posts) {
+  destroyChart('topPostsChart');
+  const top=posts.sort((a,b)=>b.likes-a.likes).slice(0,8);
+  document.getElementById('exp-topPosts').innerHTML=top.length
+    ?`Top post: <strong>${top[0].desc.slice(0,40)||'(no desc)'}</strong> — <strong>${fmt(top[0].likes)}</strong> likes. Use this as a content blueprint.`
+    :'No posts found.';
+  const ctx=document.getElementById('topPostsChart').getContext('2d');
+  chartInstances['topPostsChart']=new Chart(ctx,{type:'bar',data:{
+    labels:top.map((_,i)=>`#${i+1}`),
+    datasets:[{label:'Likes',data:top.map(p=>p.likes),backgroundColor:top.map((_,i)=>PALETTE[i%PALETTE.length]),borderRadius:7}]
+  },options:{...CHART_OPTS,plugins:{...CHART_OPTS.plugins,tooltip:{callbacks:{title:(items)=>'Post '+items[0].label,label:(item)=>{const p=top[item.dataIndex];return [`Likes: ${fmt(p.likes)}`,`Plays: ${fmt(p.plays)}`,p.desc.slice(0,50)];}}}}}});
+}
+
+function renderPie(l,c,s) {
+  destroyChart('engagementPieChart');
+  const total=l+c+s, pct=total>0?((l/total)*100).toFixed(1):0;
+  document.getElementById('exp-pie').innerHTML=total>0
+    ?`Likes account for <strong>${pct}%</strong> of all interactions. ${Number(s)>0?`Saves indicate strong intent-driven content.`:''}`
+    :'No engagement data.';
+  const ctx=document.getElementById('engagementPieChart').getContext('2d');
+  chartInstances['engagementPieChart']=new Chart(ctx,{type:'doughnut',data:{
+    labels:['Likes','Comments','Saves'],
+    datasets:[{data:[l,c,s],backgroundColor:['rgba(249,115,22,.85)','rgba(124,58,237,.85)','rgba(34,211,238,.8)'],borderWidth:0,hoverOffset:8}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',padding:12,font:{size:11}}}},cutout:'62%'}});
+}
+
+function renderTimeline(timeSt) {
+  destroyChart('timelineChart');
+  const sorted=Object.keys(timeSt).sort(), data=sorted.map(d=>timeSt[d]);
+  const maxVal=Math.max(...data), maxDate=sorted[data.indexOf(maxVal)];
+  document.getElementById('exp-timeline').innerHTML=sorted.length
+    ?`Peak day: <strong>${maxDate}</strong> with <strong>${fmt(maxVal)}</strong> likes. Study that day's content for viral signals.`
+    :'No timeline data.';
+  const ctx=document.getElementById('timelineChart').getContext('2d');
+  const g=ctx.createLinearGradient(0,0,0,290);
+  g.addColorStop(0,'rgba(249,115,22,.22)'); g.addColorStop(1,'rgba(249,115,22,.01)');
+  chartInstances['timelineChart']=new Chart(ctx,{type:'line',data:{
+    labels:sorted,
+    datasets:[{label:'Total Likes',data,fill:true,backgroundColor:g,borderColor:'rgba(249,115,22,.9)',borderWidth:2,tension:.4,pointRadius:0,pointHoverRadius:5}]
+  },options:{...CHART_OPTS}});
+}
+
+function renderPlaysTimeline(playsSt) {
+  destroyChart('playsTimelineChart');
+  const sorted=Object.keys(playsSt).sort(), data=sorted.map(d=>playsSt[d]);
+  const maxVal=Math.max(...data), maxDate=sorted[data.indexOf(maxVal)];
+  document.getElementById('exp-plays').innerHTML=sorted.length
+    ?`Highest play day: <strong>${maxDate}</strong> with <strong>${fmt(maxVal)}</strong> total plays.`
+    :'No play data.';
+  const ctx=document.getElementById('playsTimelineChart').getContext('2d');
+  const g=ctx.createLinearGradient(0,0,0,250);
+  g.addColorStop(0,'rgba(124,58,237,.22)'); g.addColorStop(1,'rgba(124,58,237,.01)');
+  chartInstances['playsTimelineChart']=new Chart(ctx,{type:'line',data:{
+    labels:sorted,
+    datasets:[{label:'Total Plays',data,fill:true,backgroundColor:g,borderColor:'rgba(124,58,237,.9)',borderWidth:2,tension:.4,pointRadius:0,pointHoverRadius:5}]
+  },options:{...CHART_OPTS}});
+}
+
+function renderHashtags(hashSt) {
+  destroyChart('hashtagChart');
+  const sorted=Object.entries(hashSt).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  document.getElementById('exp-hashtag').innerHTML=sorted.length
+    ?`<strong>#${sorted[0][0]}</strong> leads with ${fmt(sorted[0][1])} uses. Align content with top hashtags to maximise organic reach.`
+    :'No hashtag data found in this dataset.';
+  const ctx=document.getElementById('hashtagChart').getContext('2d');
+  chartInstances['hashtagChart']=new Chart(ctx,{type:'bar',data:{
+    labels:sorted.map(e=>'#'+e[0]),
+    datasets:[{label:'Uses',data:sorted.map(e=>e[1]),backgroundColor:'rgba(124,58,237,.8)',borderRadius:6}]
+  },options:{...CHART_OPTS,indexAxis:'y',scales:{x:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b7280',font:{size:11}}},y:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:11}}}}}});
+}
+
+function renderDays(daysSt) {
+  destroyChart('dayOfWeekChart');
+  const DA=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const data=DA.map(d=>daysSt[d]||0);
+  const max=Math.max(...data), topDay=DA[data.indexOf(max)];
+  document.getElementById('exp-day').innerHTML=max>0
+    ?`<strong>${topDay}</strong> posts get the most engagement. Consider scheduling key drops on this day.`
+    :'No day-of-week data found.';
+  const ctx=document.getElementById('dayOfWeekChart').getContext('2d');
+  chartInstances['dayOfWeekChart']=new Chart(ctx,{type:'bar',data:{
+    labels:DA,
+    datasets:[{label:'Total Likes',data,backgroundColor:data.map(v=>v===max?'rgba(249,115,22,.9)':'rgba(124,58,237,.55)'),borderRadius:6}]
+  },options:{...CHART_OPTS}});
+}
+
+function renderEngPP(engPP) {
+  destroyChart('engPerPostChart');
+  const sorted=Object.keys(engPP).sort(), data=sorted.map(d=>engPP[d].count>0?engPP[d].likes/engPP[d].count:0);
+  const max=Math.max(...data), bestDate=sorted[data.indexOf(max)];
+  document.getElementById('exp-engPerPost').innerHTML=max>0
+    ?`Best efficiency day: <strong>${bestDate}</strong> — avg <strong>${fmt(max)}</strong> likes/post. Replicate that day's content strategy.`
+    :'Not enough data for efficiency timeline.';
+  const ctx=document.getElementById('engPerPostChart').getContext('2d');
+  chartInstances['engPerPostChart']=new Chart(ctx,{type:'bar',data:{
+    labels:sorted,
+    datasets:[{label:'Avg Likes/Post',data,backgroundColor:'rgba(251,191,36,.75)',borderRadius:5}]
+  },options:{...CHART_OPTS}});
+}
+
+function renderHours(hourSt) {
+  destroyChart('hourChart');
+  const hours=Array.from({length:24},(_,i)=>i.toString().padStart(2,'0'));
+  const data=hours.map(h=>hourSt[h]||0);
+  const max=Math.max(...data), peakH=hours[data.indexOf(max)];
+  document.getElementById('exp-hour').innerHTML=max>0
+    ?`Most posts are published at <strong>${peakH}:00</strong>. This is the preferred posting window — correlate with engagement data for optimal timing.`
+    :'No hourly data found.';
+  const ctx=document.getElementById('hourChart').getContext('2d');
+  chartInstances['hourChart']=new Chart(ctx,{type:'bar',data:{
+    labels:hours.map(h=>h+':00'),
+    datasets:[{label:'Posts',data,backgroundColor:data.map(v=>v===max?'rgba(249,115,22,.9)':'rgba(249,115,22,.3)'),borderRadius:5}]
+  },options:{...CHART_OPTS,scales:{y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b7280',font:{size:11}}},x:{grid:{display:false},ticks:{color:'#6b7280',font:{size:10},maxRotation:45}}}}});
+}
+
+/* ══════════════════════════════════
+   RESET
+══════════════════════════════════ */
+function resetToSetup() {
+  clearTimeout(pollTimer);
+  document.getElementById('dashboardPanel').style.display='none';
+  document.getElementById('progressPanel').style.display='none';
+  document.getElementById('setupPanel').style.display='block';
+  document.getElementById('pdfBtn').style.display='none';
+  document.getElementById('resetBtn').style.display='none';
+  document.getElementById('statusBadge').style.display='none';
+  document.getElementById('runBtn').disabled=false;
+  document.getElementById('headerSub').textContent='TikTok Profile Intelligence · Automated Analytics';
+  globalData=[];
+  Object.keys(chartInstances).forEach(id=>{try{chartInstances[id].destroy();}catch(e){}});
+  chartInstances={};
+}
+
+/* ══════════════════════════════════
+   DEMO DATA
+══════════════════════════════════ */
+function loadDemoData() {
+  showToast('Loading demo dataset…','');
+  const profiles=['brandacccount','creator_demo','viral_studio'];
+  const demo=[]; const now=Date.now();
+  const tags=['fyp','viral','tiktoktrend','sponsored','review','unboxing','lifestyle','trending'];
+  for(let i=0;i<200;i++){
+    const profile=profiles[i%profiles.length];
+    const d=new Date(now-Math.random()*30*86400000);
+    const plays=Math.floor(Math.random()*800000+1000);
+    const item={
+      profile,
+      diggCount:Math.floor(plays*(0.04+Math.random()*0.12)),
+      commentCount:Math.floor(plays*(0.005+Math.random()*0.02)),
+      collectCount:Math.floor(plays*(0.003+Math.random()*0.012)),
+      shareCount:Math.floor(plays*(0.003+Math.random()*0.015)),
+      playCount:plays,
+      createTimeISO:d.toISOString(),
+      'authorMeta/name':profile,
+      desc:`Demo post for @${profile} featuring #${tags[i%tags.length]}`,
+    };
+    tags.slice(0,3+i%4).forEach((t,j)=>{item[`hashtags/${j}/name`]=t;});
+    demo.push(item);
+  }
+  loadDashboard(demo);
+  document.getElementById('setupPanel').style.display='none';
+  document.getElementById('dashboardPanel').style.display='block';
+  document.getElementById('pdfBtn').style.display='inline-flex';
+  document.getElementById('resetBtn').style.display='inline-flex';
+  showBadge('live','Demo — 200 posts');
+  document.getElementById('headerSub').textContent='200 demo posts · @brandacccount, @creator_demo, @viral_studio';
+  showToast('Demo data loaded. Real analysis runs automatically — just add usernames & click Run.','success');
+}
+</script>
+</body>
+</html>
