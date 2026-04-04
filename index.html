@@ -1735,14 +1735,47 @@
         </div>
       </div>
 
+      <!-- Raw Data Table -->
+      <details class="card fade-in" style="margin-top:20px; overflow:hidden;">
+        <summary style="padding:22px 24px; cursor:pointer; font-family:'Oxanium',sans-serif; font-size:16px; font-weight:700; user-select:none; display:flex; align-items:center; gap:10px; outline:none; background:var(--c-card2); border-bottom:1px solid rgba(255,255,255,0.05);">
+          <i class="fa-solid fa-table-list" style="color:var(--c-orange);"></i> Detailed Post Data
+          <span style="font-size:12px; color:var(--c-muted); font-weight:400; font-family:'DM Sans',sans-serif;">(Click to expand)</span>
+        </summary>
+        <div style="padding:0; overflow-x:auto;">
+          <table id="dataTable" style="width:100%; border-collapse:collapse; text-align:left; font-size:13px; white-space:nowrap;">
+            <thead>
+              <tr style="background:rgba(255,255,255,0.03); border-bottom:1px solid rgba(255,255,255,0.08);">
+                <th style="padding:14px 20px; color:var(--c-muted); font-weight:600;">Date</th>
+                <th style="padding:14px 20px; color:var(--c-muted); font-weight:600;">Profile</th>
+                <th style="padding:14px 20px; color:var(--c-muted); font-weight:600;">Description</th>
+                <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:right;">Likes</th>
+                <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:right;">Plays</th>
+                <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:right;">Comments</th>
+                <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:right;">Shares</th>
+                <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:right;">Reposts</th>
+                <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:center;">Type</th>
+                <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:center;">Link</th>
+              </tr>
+            </thead>
+            <tbody id="dataTableBody">
+              <!-- JS rendered rows -->
+            </tbody>
+          </table>
+        </div>
+      </details>
+
       <style>
         @media(max-width:900px) {
-
           #highlightCards,
           #lowlightCards {
             grid-template-columns: 1fr !important;
           }
         }
+        /* DATA TABLE CSS */
+        #dataTable tbody tr { border-bottom: 1px solid rgba(255,255,255,0.05); transition: background .2s; }
+        #dataTable tbody tr:hover { background: rgba(255,255,255,0.02); }
+        #dataTable td { padding: 12px 20px; color: var(--c-text); }
+        details > summary::-webkit-details-marker { display:none; }
       </style>
 
     </div><!-- /dashboardPanel -->
@@ -2229,6 +2262,7 @@
       }
       processData(filtered);
       generateInsights(filtered);
+      renderDataTable(filtered);
     }
 
     /* ══════════════════════════════════
@@ -2871,6 +2905,44 @@ Answer user questions based ONLY on the data above. Be concise, insightful, and 
 Format numbers with commas. Use bullet points for lists. Keep answers under 200 words unless the user asks for detail.
 CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight to the final answer.
 `.trim();
+    }
+
+    /* ══════════════════════════════════
+       DATA TABLE RENDERING
+    ══════════════════════════════════ */
+    function renderDataTable(data) {
+      const tbody = document.getElementById('dataTableBody');
+      if (!data || !data.length) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:20px; color:var(--c-muted);">No posts available.</td></tr>';
+        return;
+      }
+      
+      const rows = data.map(r => {
+        const dObj = parseDate(r.date);
+        const dateStr = dObj ? dObj.toLocaleDateString() : '-';
+        // truncate description
+        const desc = (r.description || '').replace(/\n/g, ' ');
+        const shortDesc = desc.length > 50 ? desc.substring(0, 47) + '...' : desc;
+        const linkStr = r.url ? `<a href="${r.url}" target="_blank" style="color:var(--c-cyan);"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>` : '-';
+        const typeBadge = r.isAd 
+          ? `<span style="background:rgba(251,191,36,0.1); color:#fbbf24; padding:2px 8px; border-radius:10px; font-size:10px; border:1px solid rgba(251,191,36,0.3);">Boosted</span>`
+          : `<span style="background:rgba(255,255,255,0.05); color:var(--c-muted); padding:2px 8px; border-radius:10px; font-size:10px; border:1px solid rgba(255,255,255,0.1);">Organic</span>`;
+
+        return `<tr>
+          <td>${dateStr}</td>
+          <td style="color:var(--c-orange2);">@${r.profile || '?'}</td>
+          <td title="${desc.replace(/"/g, '&quot;')}">${shortDesc}</td>
+          <td style="text-align:right;">${r.likes.toLocaleString()}</td>
+          <td style="text-align:right;">${r.plays.toLocaleString()}</td>
+          <td style="text-align:right;">${r.comments.toLocaleString()}</td>
+          <td style="text-align:right;">${(r.shares||0).toLocaleString()}</td>
+          <td style="text-align:right;">${(r.reposts||0).toLocaleString()}</td>
+          <td style="text-align:center;">${typeBadge}</td>
+          <td style="text-align:center;">${linkStr}</td>
+        </tr>`;
+      }).join('');
+
+      tbody.innerHTML = rows;
     }
 
     function addUserMessage(text) {
