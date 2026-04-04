@@ -711,6 +711,22 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px;
       <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-plays">Waiting for data.</span></div>
     </div>
 
+    <!-- Shares & Reposts Charts -->
+    <div class="grid-2 fade-in">
+      <div class="card" style="padding:24px;">
+        <div class="chart-section-label">Distribution Activity</div>
+        <div class="chart-title">Shares Over Time</div>
+        <div style="position:relative;height:250px;"><canvas id="sharesTimelineChart"></canvas></div>
+        <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-shares">Waiting for data.</span></div>
+      </div>
+      <div class="card" style="padding:24px;">
+        <div class="chart-section-label">Virality Signal</div>
+        <div class="chart-title">Reposts Over Time</div>
+        <div style="position:relative;height:250px;"><canvas id="repostsTimelineChart"></canvas></div>
+        <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-reposts">Waiting for data.</span></div>
+      </div>
+    </div>
+
     <!-- Highlights & Lowlights -->
     <div class="card fade-in" id="hlSection" style="padding:28px;">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
@@ -931,7 +947,21 @@ async function startScrape() {
 
   try {
     /* STEP 1 — Start run */
-    const payload = buildInput(usernames, maxResults);
+    const dateFilter = getDateFilter();
+    const hasDateFilter = dateFilter && (dateFilter.from || dateFilter.to);
+
+    // Auto-bump maxResults when a date filter is active:
+    // fetch more posts so the client-side filter has enough to work with.
+    let effectiveMax = maxResults;
+    if (hasDateFilter && selectedDays > 0 && selectedDays !== -1) {
+      // For preset windows scale up: 7d→50, 30d→150, 90d→300, etc.
+      effectiveMax = Math.max(maxResults, Math.min(500, selectedDays * 2));
+    } else if (selectedDays === -1) {
+      // Custom range — always fetch at least 200 posts
+      effectiveMax = Math.max(maxResults, 200);
+    }
+
+    const payload = buildInput(usernames, effectiveMax, dateFilter);
     console.log('[Clabstream] Starting actor with payload:', JSON.stringify(payload, null, 2));
 
     const runData = await apifyFetch(`/acts/${encodeURIComponent(ACTOR_ID)}/runs`, {
@@ -960,8 +990,7 @@ async function startScrape() {
 
     setProgress(80,'Processing & analyzing data…');
 
-    /* STEP 4 — Filter & normalize */
-    const dateFilter = getDateFilter();
+    /* STEP 4 — Filter & normalize (dateFilter already computed above) */
     const normalized = normalizeData(items, usernames, dateFilter);
     if (!normalized.length) throw new Error(`0 posts matched the selected timeframe. Try selecting "All time" or a wider date range.`);
 
@@ -1013,19 +1042,37 @@ async function startScrape() {
    BUILD ACTOR INPUT
    clockworks~tiktok-scraper schema
 ══════════════════════════════════ */
-function buildInput(usernames, maxResults) {
+function buildInput(usernames, maxResults, dateFilter) {
   const sort = document.getElementById('sortBy').value;
-  return {
+  // When a date filter is active, always use 'latest' sort so we don't
+  // miss older posts; also pass oldestPostDate so the actor stops early.
+  const hasDateFilter = dateFilter && (dateFilter.from || dateFilter.to);
+  const effectiveSort = hasDateFilter ? 'latest' : (sort === 'popular' ? 'mostLiked' : 'latest');
+
+  const payload = {
     profiles: usernames.map(u => `https://www.tiktok.com/@${u}`),
     resultsPerPage: Math.min(maxResults, 50),
     maxResults: maxResults,
-    sortBy: sort === 'popular' ? 'mostLiked' : 'latest',
+    sortBy: effectiveSort,
     shouldDownloadVideos: false,
     shouldDownloadCovers: false,
     shouldDownloadSubtitles: false,
     shouldDownloadSlideshowImages: false,
     profilesPerQuery: usernames.length,
   };
+
+  // Pass date boundaries to the actor so it stops scraping at the right point
+  // clockworks~tiktok-scraper accepts oldestPostDate / newestPostDate as ISO strings
+  if (hasDateFilter) {
+    if (dateFilter.from) {
+      payload.oldestPostDate = dateFilter.from.toISOString().split('T')[0];
+    }
+    if (dateFilter.to) {
+      payload.newestPostDate = dateFilter.to.toISOString().split('T')[0];
+    }
+  }
+
+  return payload;
 }
 
 /* ══════════════════════════════════
@@ -1300,7 +1347,7 @@ function generateInsights(data) {
 ══════════════════════════════════ */
 function processData(data) {
   let likes=0,comments=0,saves=0,shares=0,reposts=0;
-  const timeSt={},hashSt={},daysSt={},engPP={},hourSt={},playsSt={};
+  const timeSt={},hashSt={},daysSt={},engPP={},hourSt={},playsSt={},sharesSt={},repostsSt={};
   const DA=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   DA.forEach(d=>{daysSt[d]=0;});
   const topPosts=[];
@@ -1315,6 +1362,8 @@ function processData(data) {
       const ds=d.toISOString().split('T')[0];
       timeSt[ds]=(timeSt[ds]||0)+l;
       playsSt[ds]=(playsSt[ds]||0)+p;
+      sharesSt[ds]=(sharesSt[ds]||0)+sh;
+      repostsSt[ds]=(repostsSt[ds]||0)+rp;
       if(!engPP[ds])engPP[ds]={likes:0,count:0};
       engPP[ds].likes+=l; engPP[ds].count+=1;
       daysSt[DA[d.getDay()]]+=l;
@@ -1337,6 +1386,8 @@ function processData(data) {
   renderPie(likes,comments,saves,shares);
   renderTimeline(timeSt);
   renderPlaysTimeline(playsSt);
+  renderSharesTimeline(sharesSt);
+  renderRepostsTimeline(repostsSt);
   renderHashtags(hashSt);
   renderDays(daysSt);
   renderEngPP(engPP);
@@ -1404,7 +1455,7 @@ function renderTimeline(timeSt) {
 function renderPlaysTimeline(playsSt) {
   destroyChart('playsTimelineChart');
   const sorted=Object.keys(playsSt).sort(), data=sorted.map(d=>playsSt[d]);
-  const maxVal=Math.max(...data), maxDate=sorted[data.indexOf(maxVal)];
+  const maxVal=Math.max(...data,0), maxDate=sorted[data.indexOf(maxVal)];
   document.getElementById('exp-plays').innerHTML=sorted.length
     ?`Highest play day: <strong>${maxDate}</strong> with <strong>${fmt(maxVal)}</strong> total plays.`
     :'No play data.';
@@ -1414,6 +1465,40 @@ function renderPlaysTimeline(playsSt) {
   chartInstances['playsTimelineChart']=new Chart(ctx,{type:'line',data:{
     labels:sorted,
     datasets:[{label:'Total Plays',data,fill:true,backgroundColor:g,borderColor:'rgba(124,58,237,.9)',borderWidth:2,tension:.4,pointRadius:0,pointHoverRadius:5}]
+  },options:{...CHART_OPTS}});
+}
+
+function renderSharesTimeline(sharesSt) {
+  destroyChart('sharesTimelineChart');
+  const sorted=Object.keys(sharesSt).sort(), data=sorted.map(d=>sharesSt[d]);
+  const maxVal=Math.max(...data,0), maxDate=sorted[data.indexOf(maxVal)];
+  const hasData=sorted.length>0 && maxVal>0;
+  document.getElementById('exp-shares').innerHTML=hasData
+    ?`Peak share day: <strong>${maxDate}</strong> with <strong>${fmt(maxVal)}</strong> shares — high distribution activity indicates content that resonates beyond the follower base.`
+    :'No share data available in this dataset. Shares may not be returned by the scraper for this account.';
+  const ctx=document.getElementById('sharesTimelineChart').getContext('2d');
+  const g=ctx.createLinearGradient(0,0,0,250);
+  g.addColorStop(0,'rgba(34,211,238,.22)'); g.addColorStop(1,'rgba(34,211,238,.01)');
+  chartInstances['sharesTimelineChart']=new Chart(ctx,{type:'bar',data:{
+    labels:sorted.length?sorted:['No data'],
+    datasets:[{label:'Shares',data:sorted.length?data:[0],backgroundColor:'rgba(34,211,238,.65)',borderRadius:5}]
+  },options:{...CHART_OPTS}});
+}
+
+function renderRepostsTimeline(repostsSt) {
+  destroyChart('repostsTimelineChart');
+  const sorted=Object.keys(repostsSt).sort(), data=sorted.map(d=>repostsSt[d]);
+  const maxVal=Math.max(...data,0), maxDate=sorted[data.indexOf(maxVal)];
+  const hasData=sorted.length>0 && maxVal>0;
+  document.getElementById('exp-reposts').innerHTML=hasData
+    ?`Most reposts on <strong>${maxDate}</strong> with <strong>${fmt(maxVal)}</strong> reposts — a strong virality signal worth studying.`
+    :'No repost data available. TikTok\'s API may not expose repost counts for this account or region.';
+  const ctx=document.getElementById('repostsTimelineChart').getContext('2d');
+  const g=ctx.createLinearGradient(0,0,0,250);
+  g.addColorStop(0,'rgba(251,191,36,.22)'); g.addColorStop(1,'rgba(251,191,36,.01)');
+  chartInstances['repostsTimelineChart']=new Chart(ctx,{type:'bar',data:{
+    labels:sorted.length?sorted:['No data'],
+    datasets:[{label:'Reposts',data:sorted.length?data:[0],backgroundColor:'rgba(251,191,36,.65)',borderRadius:5}]
   },options:{...CHART_OPTS}});
 }
 
