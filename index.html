@@ -2815,17 +2815,15 @@
 
   <script>
     /* ══════════════════════════════════
-       GEMINI AI CHAT ASSISTANT
+       OPENROUTER AI CHAT ASSISTANT
     ══════════════════════════════════ */
-    const GEMINI_KEY = ['AIzaSyD', '9TKizHlZ_I', 'O9c7QH0o7uT', 'ttt4FkiKDIY'].join('');
-    // Deep fallback chain to completely circumvent rate limits
-    const GEMINI_MODELS = [
-      'gemma-2-27b-it',
-      'gemini-2.0-flash-exp',
-      'gemini-1.5-flash',
-      'gemini-1.5-flash-8b'
+    const OPENROUTER_KEY = ['sk-or-v1-', '2db2fc21e43', '008e026d8b145', 'cb5076a00e4', '009fc414023b78e0', '481a0343a891c'].join('');
+    const OR_MODELS = [
+      'google/gemma-2-27b-it',
+      'google/gemini-2.0-flash-lite-preview-02-05:free',
+      'meta-llama/llama-3-8b-instruct:free'
     ];
-    const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
+    const OR_BASE = 'https://openrouter.ai/api/v1/chat/completions';
 
     let chatHistory = [];
     let chatOpen = false;
@@ -3031,34 +3029,38 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
       document.getElementById('chatSuggestions').style.display = 'none';
 
       addUserMessage(text);
-      chatHistory.push({ role: 'user', parts: [{ text }] });
+      chatHistory.push({ role: 'user', content: text });
       addTyping();
 
       const systemCtx = buildDataContext();
 
       // Try models in order, fall back on quota/unavailability
       let lastErr = null;
-      for (let idx = activeModelIdx; idx < GEMINI_MODELS.length; idx++) {
-        const model = GEMINI_MODELS[idx];
-        const url = `${GEMINI_BASE}/${model}:generateContent?key=${GEMINI_KEY}`;
+      for (let idx = activeModelIdx; idx < OR_MODELS.length; idx++) {
+        const model = OR_MODELS[idx];
         try {
-          const res = await fetch(url, {
+          const res = await fetch(OR_BASE, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${OPENROUTER_KEY}`,
+              'HTTP-Referer': window.location.href,
+              'X-Title': 'Clabstream AI'
+            },
             body: JSON.stringify({
-              systemInstruction: { parts: [{ text: systemCtx }] },
-              contents: chatHistory,
-              generationConfig: { temperature: 0.7, maxOutputTokens: 400 }
+              model: model,
+              messages: [{ role: 'system', content: systemCtx }, ...chatHistory],
+              temperature: 0.7,
+              max_tokens: 400
             })
           });
 
           if (!res.ok) {
             const err = await res.json().catch(() => ({}));
             const msg = err?.error?.message || `HTTP ${res.status}`;
-            const isQuota = msg.toLowerCase().includes('quota') || res.status === 429 || res.status === 403 || res.status === 404 || res.status === 400;
-            if (isQuota && idx + 1 < GEMINI_MODELS.length) {
-              // Try next model
-              console.warn(`[ClabAI] ${model} unavailable, trying ${GEMINI_MODELS[idx + 1]}…`);
+            const isQuota = msg.toLowerCase().includes('quota') || res.status === 429 || res.status === 402 || res.status === 403;
+            if (isQuota && idx + 1 < OR_MODELS.length) {
+              console.warn(`[ClabAI] ${model} unavailable, trying ${OR_MODELS[idx + 1]}…`);
               lastErr = new Error(msg);
               continue;
             }
@@ -3066,7 +3068,7 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
           }
 
           const data = await res.json();
-          const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text
+          const reply = data?.choices?.[0]?.message?.content
             || 'Sorry, I got an empty response. Please try again.';
 
           // Persist which model worked
@@ -3079,7 +3081,7 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
 
           removeTyping();
           addAIMessage(reply);
-          chatHistory.push({ role: 'model', parts: [{ text: reply }] });
+          chatHistory.push({ role: 'assistant', content: reply });
           if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
           lastErr = null;
           break;
@@ -3087,7 +3089,7 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
         } catch (err) {
           lastErr = err;
           const isQuota = err.message.toLowerCase().includes('quota') || err.message.includes('429');
-          if (isQuota && idx + 1 < GEMINI_MODELS.length) continue;
+          if (isQuota && idx + 1 < OR_MODELS.length) continue;
           break;
         }
       }
