@@ -1810,41 +1810,7 @@
     <div id="toast"></div>
   </div><!-- /wrap -->
 
-  <!-- ══ AI CHAT WIDGET ══ -->
-  <button id="chatFab" onclick="toggleChat()" title="Ask AI about your data">
-    <i class="fa-solid fa-wand-magic-sparkles"></i> AI Ask
-    <span class="fab-badge" id="chatBadge" style="display:none;">!</span>
-  </button>
 
-  <div id="chatPanel">
-    <div class="chat-header">
-      <div class="chat-gem-icon" style="font-family:'Oxanium',sans-serif;font-weight:800;font-size:12px;">AI</div>
-      <div style="flex:1;">
-        <div style="font-family:'Oxanium',sans-serif;font-size:14px;font-weight:700;">Clabstream AI</div>
-        <div style="font-size:11px;color:var(--c-muted);">Powered by Gemini · Ask about your data</div>
-      </div>
-      <button onclick="toggleChat()"
-        style="background:none;border:none;color:var(--c-muted);cursor:pointer;font-size:18px;padding:2px 6px;"
-        title="Close">&times;</button>
-    </div>
-
-    <div class="chat-messages" id="chatMessages"></div>
-
-    <div class="chat-suggestions" id="chatSuggestions">
-      <span class="chat-chip" onclick="askChip(this)">Which post performed best?</span>
-      <span class="chat-chip" onclick="askChip(this)">What's my avg engagement rate?</span>
-      <span class="chat-chip" onclick="askChip(this)">Best day to post?</span>
-      <span class="chat-chip" onclick="askChip(this)">How many boosted posts?</span>
-      <span class="chat-chip" onclick="askChip(this)">Top hashtags?</span>
-    </div>
-
-    <div class="chat-footer">
-      <textarea id="chatInput" placeholder="Ask anything about your TikTok data…" rows="1"
-        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"
-        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px';"></textarea>
-      <button id="chatSend" onclick="sendChat()" title="Send"><i class="fa-solid fa-paper-plane"></i></button>
-    </div>
-  </div>
 
   <script>
     /* ══════════════════════════════════
@@ -2084,7 +2050,7 @@
         document.getElementById('pdfBtn').style.display = 'inline-flex';
         document.getElementById('resetBtn').style.display = 'inline-flex';
         document.getElementById('headerSub').textContent = `${normalized.length} posts · @${usernames.join(', @')} · just scraped`;
-        showChatFab();
+        showToast('Analysis completed successfully!', 'success');
 
       } catch (err) {
         console.error('[Clabstream] Error:', err);
@@ -2688,7 +2654,8 @@
         const rankBg = isHL ? 'rgba(16,185,129,0.85)' : 'rgba(244,63,94,0.85)';
         const rankLabel = isHL ? `#${rank} Highlight` : `#${rank} Lowlight`;
         const reason = isHL ? whyHighlight(p, rank) : whyLowlight(p);
-        const dateStr = p.createTimeISO ? new Date(p.createTimeISO).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+        const dObj = p.createTimeISO ? new Date(p.createTimeISO) : null;
+        const dateStr = dObj ? `${dObj.getDate()} - ${dObj.toLocaleString('en-US', { month: 'long' })} - ${dObj.getFullYear()}` : '';
         const thumbHtml = p.cover
           ? `<img src="${p.cover}" class="cover-thumb" alt="cover" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
          <div class="cover-thumb-placeholder" style="display:none;"><i class="fa-brands fa-tiktok"></i><span style="font-size:12px;">No preview</span></div>`
@@ -2809,7 +2776,7 @@
       showBadge('live', 'Demo — 200 posts');
       document.getElementById('headerSub').textContent = '200 demo posts · @brandacccount, @creator_demo, @viral_studio';
       showToast('Demo data loaded. Real analysis runs automatically — just add usernames & click Run.', 'success');
-      showChatFab();
+      showToast('Demo data loaded. Real analysis runs automatically — just add usernames & click Run.', 'success');
     }
   </script>
 
@@ -2976,7 +2943,7 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
 
       const rows = data.map(r => {
         const dObj = parseDate(r.createTimeISO);
-        const dateStr = dObj ? dObj.toLocaleDateString() : '-';
+        const dateStr = dObj ? dObj.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
         // truncate description
         const desc = (r.desc || '').replace(/\n/g, ' ');
         const shortDesc = desc.length > 50 ? desc.substring(0, 47) + '...' : desc;
@@ -3001,139 +2968,88 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
 
       tbody.innerHTML = rows;
     }
+    if (!text) return;
 
-    function addUserMessage(text) {
-      const el = document.createElement('div');
-      el.className = 'chat-bubble user';
-      el.textContent = text;
-      document.getElementById('chatMessages').appendChild(el);
-      scrollChat();
-      return el;
-    }
+    input.value = '';
+    input.style.height = 'auto';
+    document.getElementById('chatSend').disabled = true;
+    document.getElementById('chatSuggestions').style.display = 'none';
 
-    function addAIMessage(text) {
-      const el = document.createElement('div');
-      el.className = 'chat-bubble ai';
-      el.innerHTML = formatAIText(text);
-      document.getElementById('chatMessages').appendChild(el);
-      scrollChat();
-      return el;
-    }
+    addUserMessage(text);
+    chatHistory.push({ role: 'user', content: text });
+    addTyping();
 
-    function addTyping() {
-      const el = document.createElement('div');
-      el.className = 'chat-bubble ai typing';
-      el.id = 'typingBubble';
-      el.textContent = 'Thinking';
-      document.getElementById('chatMessages').appendChild(el);
-      scrollChat();
-      return el;
-    }
+    const systemCtx = buildDataContext();
 
-    function removeTyping() {
-      document.getElementById('typingBubble')?.remove();
-    }
+    // Try models in order, fall back on quota/unavailability
+    let lastErr = null;
+    for (let idx = activeModelIdx; idx < OR_MODELS.length; idx++) {
+      const model = OR_MODELS[idx];
+      try {
+        const res = await fetch(OR_BASE, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${OPENROUTER_KEY}`,
+            'HTTP-Referer': window.location.href,
+            'X-Title': 'Clabstream AI'
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [{ role: 'system', content: systemCtx }, ...chatHistory],
+            temperature: 0.7,
+            max_tokens: 400
+          })
+        });
 
-    function scrollChat() {
-      const box = document.getElementById('chatMessages');
-      box.scrollTop = box.scrollHeight;
-    }
-
-    function formatAIText(text) {
-      return text
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.+?)\*/g, '<em>$1</em>')
-        .replace(/^[-•] (.+)$/gm, '<li>$1</li>')
-        .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
-        .replace(/\n/g, '<br>');
-    }
-
-    async function sendChat() {
-      const input = document.getElementById('chatInput');
-      const text = input.value.trim();
-      if (!text) return;
-
-      input.value = '';
-      input.style.height = 'auto';
-      document.getElementById('chatSend').disabled = true;
-      document.getElementById('chatSuggestions').style.display = 'none';
-
-      addUserMessage(text);
-      chatHistory.push({ role: 'user', content: text });
-      addTyping();
-
-      const systemCtx = buildDataContext();
-
-      // Try models in order, fall back on quota/unavailability
-      let lastErr = null;
-      for (let idx = activeModelIdx; idx < OR_MODELS.length; idx++) {
-        const model = OR_MODELS[idx];
-        try {
-          const res = await fetch(OR_BASE, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${OPENROUTER_KEY}`,
-              'HTTP-Referer': window.location.href,
-              'X-Title': 'Clabstream AI'
-            },
-            body: JSON.stringify({
-              model: model,
-              messages: [{ role: 'system', content: systemCtx }, ...chatHistory],
-              temperature: 0.7,
-              max_tokens: 400
-            })
-          });
-
-          if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            const msg = err?.error?.message || `HTTP ${res.status}`;
-            const isQuota = msg.toLowerCase().includes('quota') || res.status === 429 || res.status === 402 || res.status === 403;
-            if (isQuota && idx + 1 < OR_MODELS.length) {
-              console.warn(`[ClabAI] ${model} unavailable, trying ${OR_MODELS[idx + 1]}…`);
-              lastErr = new Error(msg);
-              continue;
-            }
-            throw new Error(msg);
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          const msg = err?.error?.message || `HTTP ${res.status}`;
+          const isQuota = msg.toLowerCase().includes('quota') || res.status === 429 || res.status === 402 || res.status === 403;
+          if (isQuota && idx + 1 < OR_MODELS.length) {
+            console.warn(`[ClabAI] ${model} unavailable, trying ${OR_MODELS[idx + 1]}…`);
+            lastErr = new Error(msg);
+            continue;
           }
-
-          const data = await res.json();
-          const reply = data?.choices?.[0]?.message?.content
-            || 'Sorry, I got an empty response. Please try again.';
-
-          // Persist which model worked
-          if (idx !== activeModelIdx) {
-            activeModelIdx = idx;
-            // Update header subtitle
-            document.querySelector('#chatPanel .chat-header div:nth-child(2) div:last-child').textContent =
-              `Powered by ${model} · Ask about your data`;
-          }
-
-          removeTyping();
-          addAIMessage(reply);
-          chatHistory.push({ role: 'assistant', content: reply });
-          if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
-          lastErr = null;
-          break;
-
-        } catch (err) {
-          lastErr = err;
-          const isQuota = err.message.toLowerCase().includes('quota') || err.message.includes('429');
-          if (isQuota && idx + 1 < OR_MODELS.length) continue;
-          break;
+          throw new Error(msg);
         }
-      }
 
-      if (lastErr) {
+        const data = await res.json();
+        const reply = data?.choices?.[0]?.message?.content
+          || 'Sorry, I got an empty response. Please try again.';
+
+        // Persist which model worked
+        if (idx !== activeModelIdx) {
+          activeModelIdx = idx;
+          // Update header subtitle
+          document.querySelector('#chatPanel .chat-header div:nth-child(2) div:last-child').textContent =
+            `Powered by ${model} · Ask about your data`;
+        }
+
         removeTyping();
-        // Print raw error directly
-        addAIMessage(`⚠️ API Error: ${lastErr.message}`);
-        console.error('[ClabAI RAW ERROR]', lastErr);
-      }
+        addAIMessage(reply);
+        chatHistory.push({ role: 'assistant', content: reply });
+        if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+        lastErr = null;
+        break;
 
-      document.getElementById('chatSend').disabled = false;
-      input.focus();
+      } catch (err) {
+        lastErr = err;
+        const isQuota = err.message.toLowerCase().includes('quota') || err.message.includes('429');
+        if (isQuota && idx + 1 < OR_MODELS.length) continue;
+        break;
+      }
+    }
+
+    if (lastErr) {
+      removeTyping();
+      // Print raw error directly
+      addAIMessage(`⚠️ API Error: ${lastErr.message}`);
+      console.error('[ClabAI RAW ERROR]', lastErr);
+    }
+
+    document.getElementById('chatSend').disabled = false;
+    input.focus();
     }
   </script>
 </body>
