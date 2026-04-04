@@ -324,6 +324,118 @@ body::after {
 input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 5px; border-radius: 5px; background: rgba(255,255,255,0.1); outline: none; }
 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--c-orange); cursor: pointer; border: 2px solid var(--c-bg); box-shadow: 0 2px 8px rgba(249,115,22,0.4); }
 
+/* ── AI CHAT WIDGET ── */
+#chatFab {
+  position: fixed; bottom: 28px; right: 28px; z-index: 9998;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--grad); border: none; cursor: pointer;
+  box-shadow: 0 6px 28px rgba(249,115,22,0.45);
+  display: none; align-items: center; justify-content: center;
+  font-size: 22px; color: white;
+  transition: transform .25s, box-shadow .25s;
+  animation: fabPop .35s cubic-bezier(.34,1.56,.64,1);
+}
+#chatFab:hover { transform: scale(1.1); box-shadow: 0 10px 36px rgba(249,115,22,0.55); }
+@keyframes fabPop { from{transform:scale(0);opacity:0;} to{transform:scale(1);opacity:1;} }
+#chatFab .fab-badge {
+  position: absolute; top: -3px; right: -3px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #34d399; border: 2px solid var(--c-bg);
+  font-size: 9px; font-weight: 800; color: #052e16;
+  display: flex; align-items: center; justify-content: center;
+}
+
+#chatPanel {
+  position: fixed; bottom: 96px; right: 28px; z-index: 9997;
+  width: 380px; max-height: 600px;
+  background: #0c0c1e;
+  border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 22px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(249,115,22,0.06);
+  display: flex; flex-direction: column;
+  transform: translateY(20px) scale(0.95); opacity: 0; pointer-events: none;
+  transition: all .3s cubic-bezier(.34,1.2,.64,1);
+  overflow: hidden;
+}
+#chatPanel.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: all; }
+@media(max-width:460px){#chatPanel{width:calc(100vw - 24px);right:12px;bottom:88px;}}
+
+.chat-header {
+  padding: 16px 18px 14px;
+  background: linear-gradient(135deg,rgba(124,58,237,0.18),rgba(249,115,22,0.10));
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0;
+}
+.chat-gem-icon {
+  width: 34px; height: 34px; border-radius: 9px; flex-shrink:0;
+  background: linear-gradient(135deg,#7c3aed,#f97316);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: white;
+}
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 14px 14px 6px;
+  display: flex; flex-direction: column; gap: 10px;
+  scroll-behavior: smooth;
+}
+.chat-messages::-webkit-scrollbar { width: 4px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+.chat-bubble {
+  max-width: 88%; padding: 10px 13px; border-radius: 14px;
+  font-size: 13px; line-height: 1.6; animation: bubbleIn .2s ease;
+}
+@keyframes bubbleIn { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} }
+.chat-bubble.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg,rgba(249,115,22,0.22),rgba(124,58,237,0.15));
+  border: 1px solid rgba(249,115,22,0.25); color: #fdba74;
+}
+.chat-bubble.ai {
+  align-self: flex-start;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08); color: #cbd5e1;
+}
+.chat-bubble.ai strong { color: #e2e8f0; }
+.chat-bubble.ai ul { padding-left: 16px; margin: 4px 0; }
+.chat-bubble.ai li { margin-bottom: 3px; }
+.chat-bubble.typing { color: var(--c-muted); font-style: italic; }
+.chat-bubble.typing::after { content: ''; animation: dots 1.2s infinite step-start; }
+@keyframes dots { 0%{content:'';} 33%{content:'.';} 66%{content:'..';} 100%{content:'...';} }
+.chat-footer {
+  padding: 10px 12px 14px; border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0;
+}
+#chatInput {
+  flex: 1; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+  padding: 9px 13px; color: var(--c-text); font-size: 13px;
+  font-family: 'DM Sans', sans-serif; outline: none; resize: none;
+  max-height: 100px; line-height: 1.5;
+  transition: border-color .2s;
+}
+#chatInput:focus { border-color: rgba(124,58,237,0.5); }
+#chatInput::placeholder { color: var(--c-muted); }
+#chatSend {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  background: var(--grad); border: none; cursor: pointer;
+  color: white; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity .2s, transform .15s;
+}
+#chatSend:hover { opacity: .88; transform: scale(1.07); }
+#chatSend:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+.chat-suggestions {
+  padding: 0 12px 10px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink:0;
+}
+.chat-chip {
+  font-size: 11px; padding: 5px 10px; border-radius: 999px; cursor: pointer;
+  background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.25);
+  color: #c4b5fd; transition: background .2s;
+  white-space: nowrap;
+}
+.chat-chip:hover { background: rgba(124,58,237,0.22); }
+
 /* COVER CARD */
 .cover-card {
   border-radius: 14px; overflow: hidden; position: relative;
@@ -771,6 +883,40 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px;
   <div id="toast"></div>
 </div><!-- /wrap -->
 
+<!-- ══ AI CHAT WIDGET ══ -->
+<button id="chatFab" onclick="toggleChat()" title="Ask AI about your data">
+  <i class="fa-solid fa-robot"></i>
+  <span class="fab-badge" id="chatBadge" style="display:none;">!</span>
+</button>
+
+<div id="chatPanel">
+  <div class="chat-header">
+    <div class="chat-gem-icon"><i class="fa-solid fa-robot"></i></div>
+    <div style="flex:1;">
+      <div style="font-family:'Oxanium',sans-serif;font-size:14px;font-weight:700;">Clabstream AI</div>
+      <div style="font-size:11px;color:var(--c-muted);">Powered by Gemini · Ask about your data</div>
+    </div>
+    <button onclick="toggleChat()" style="background:none;border:none;color:var(--c-muted);cursor:pointer;font-size:18px;padding:2px 6px;" title="Close">&times;</button>
+  </div>
+
+  <div class="chat-messages" id="chatMessages"></div>
+
+  <div class="chat-suggestions" id="chatSuggestions">
+    <span class="chat-chip" onclick="askChip(this)">Which post performed best?</span>
+    <span class="chat-chip" onclick="askChip(this)">What's my avg engagement rate?</span>
+    <span class="chat-chip" onclick="askChip(this)">Best day to post?</span>
+    <span class="chat-chip" onclick="askChip(this)">How many boosted posts?</span>
+    <span class="chat-chip" onclick="askChip(this)">Top hashtags?</span>
+  </div>
+
+  <div class="chat-footer">
+    <textarea id="chatInput" placeholder="Ask anything about your TikTok data…" rows="1"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"
+      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px';"></textarea>
+    <button id="chatSend" onclick="sendChat()" title="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </div>
+</div>
+
 <script>
 /* ══════════════════════════════════
    CONFIG (backend token — hidden from user)
@@ -1009,6 +1155,7 @@ async function startScrape() {
     document.getElementById('pdfBtn').style.display='inline-flex';
     document.getElementById('resetBtn').style.display='inline-flex';
     document.getElementById('headerSub').textContent=`${normalized.length} posts · @${usernames.join(', @')} · just scraped`;
+    showChatFab();
 
   } catch(err) {
     console.error('[Clabstream] Error:', err);
@@ -1658,6 +1805,12 @@ function resetToSetup() {
   document.getElementById('statusBadge').style.display='none';
   document.getElementById('runBtn').disabled=false;
   document.getElementById('headerSub').textContent='TikTok Profile Intelligence · Automated Analytics';
+  // Hide chat
+  document.getElementById('chatFab').style.display='none';
+  document.getElementById('chatPanel').classList.remove('open');
+  chatOpen=false; chatInitialized=false; chatHistory=[];
+  document.getElementById('chatMessages').innerHTML='';
+  document.getElementById('chatSuggestions').style.display='flex';
   globalData=[];
   Object.keys(chartInstances).forEach(id=>{try{chartInstances[id].destroy();}catch(e){}});
   chartInstances={};
@@ -1704,6 +1857,227 @@ function loadDemoData() {
   showBadge('live','Demo — 200 posts');
   document.getElementById('headerSub').textContent='200 demo posts · @brandacccount, @creator_demo, @viral_studio';
   showToast('Demo data loaded. Real analysis runs automatically — just add usernames & click Run.','success');
+  showChatFab();
+}
+</script>
+
+<script>
+/* ══════════════════════════════════
+   GEMINI AI CHAT ASSISTANT
+══════════════════════════════════ */
+const GEMINI_KEY = 'AIzaSyDbjsB_hehwzzHU0pJ4LlQZsHa7bZbELwI';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+
+let chatHistory = [];
+let chatOpen = false;
+let chatInitialized = false;
+
+function showChatFab() {
+  const fab = document.getElementById('chatFab');
+  fab.style.display = 'flex';
+}
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  const panel = document.getElementById('chatPanel');
+  panel.classList.toggle('open', chatOpen);
+  if (chatOpen && !chatInitialized) {
+    chatInitialized = true;
+    addAIMessage('Hi! I\'m your Clabstream AI assistant 🤖\n\nI have access to all your scraped TikTok data. Ask me anything — best performing posts, engagement trends, hashtag strategy, or posting time recommendations.');
+  }
+  if (chatOpen) setTimeout(()=>document.getElementById('chatInput').focus(), 300);
+}
+
+function askChip(el) {
+  document.getElementById('chatInput').value = el.textContent.trim();
+  document.getElementById('chatSuggestions').style.display = 'none';
+  sendChat();
+}
+
+/* Build a rich data summary to inject as system context */
+function buildDataContext() {
+  if (!globalData || !globalData.length) return 'No data loaded.';
+
+  const total = globalData.length;
+  const profiles = [...new Set(globalData.map(r=>r.profile).filter(Boolean))];
+  const totalLikes = globalData.reduce((s,r)=>s+Number(r.diggCount||0),0);
+  const totalComments = globalData.reduce((s,r)=>s+Number(r.commentCount||0),0);
+  const totalSaves = globalData.reduce((s,r)=>s+Number(r.collectCount||0),0);
+  const totalShares = globalData.reduce((s,r)=>s+Number(r.shareCount||0),0);
+  const totalReposts = globalData.reduce((s,r)=>s+Number(r.repostCount||0),0);
+  const totalPlays = globalData.reduce((s,r)=>s+Number(r.playCount||0),0);
+  const adPosts = globalData.filter(r=>r.isAd).length;
+  const avgLikes = (totalLikes/total).toFixed(0);
+  const avgPlays = (totalPlays/total).toFixed(0);
+
+  const dates = globalData.map(r=>r.createTimeISO?new Date(r.createTimeISO):null).filter(Boolean);
+  const minDate = dates.length ? new Date(Math.min(...dates)).toISOString().split('T')[0] : 'N/A';
+  const maxDate = dates.length ? new Date(Math.max(...dates)).toISOString().split('T')[0] : 'N/A';
+
+  // Top 5 posts by likes
+  const top5 = [...globalData].sort((a,b)=>Number(b.diggCount||0)-Number(a.diggCount||0)).slice(0,5);
+  const top5str = top5.map((p,i)=>`${i+1}. "${(p.desc||'').slice(0,60)}" — ${Number(p.diggCount||0).toLocaleString()} likes, ${Number(p.playCount||0).toLocaleString()} plays (@${p.profile})`).join('\n');
+
+  // Bottom 3 posts by likes (with plays >=100)
+  const bot3 = [...globalData].filter(r=>Number(r.playCount||0)>=100).sort((a,b)=>Number(a.diggCount||0)-Number(b.diggCount||0)).slice(0,3);
+  const bot3str = bot3.map((p,i)=>`${i+1}. "${(p.desc||'').slice(0,60)}" — ${Number(p.diggCount||0).toLocaleString()} likes, ${Number(p.playCount||0).toLocaleString()} plays (@${p.profile})`).join('\n');
+
+  // Hashtag frequency
+  const hashSt={};
+  globalData.forEach(r=>{
+    for(const k in r) if(k.startsWith('hashtags/')&&k.endsWith('/name')&&r[k]&&typeof r[k]==='string')
+      hashSt[r[k].toLowerCase()]=(hashSt[r[k].toLowerCase()]||0)+1;
+  });
+  const topTags = Object.entries(hashSt).sort((a,b)=>b[1]-a[1]).slice(0,10).map(e=>`#${e[0]}(${e[1]})`).join(', ');
+
+  // Day of week
+  const DA=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const daySt={}; DA.forEach(d=>{daySt[d]=0;});
+  globalData.forEach(r=>{ const d=r.createTimeISO?new Date(r.createTimeISO):null; if(d)daySt[DA[d.getDay()]]+=Number(r.diggCount||0); });
+  const bestDay=Object.entries(daySt).sort((a,b)=>b[1]-a[1])[0]?.[0]||'N/A';
+
+  // Hour of day
+  const hourSt={};
+  globalData.forEach(r=>{ const d=r.createTimeISO?new Date(r.createTimeISO):null; if(d){const h=d.getHours().toString().padStart(2,'0');hourSt[h]=(hourSt[h]||0)+1;} });
+  const bestHour=Object.entries(hourSt).sort((a,b)=>b[1]-a[1])[0]?.[0]||'N/A';
+
+  return `
+== TIKTOK ANALYTICS DATA SUMMARY ==
+Profiles analyzed: ${profiles.map(p=>'@'+p).join(', ')}
+Date range: ${minDate} to ${maxDate}
+Total posts: ${total}
+Boosted posts (isAd): ${adPosts} (${total>0?((adPosts/total)*100).toFixed(1):0}%)
+
+== ENGAGEMENT TOTALS ==
+Total Likes: ${totalLikes.toLocaleString()} (avg ${avgLikes}/post)
+Total Comments: ${totalComments.toLocaleString()}
+Total Saves: ${totalSaves.toLocaleString()}
+Total Shares: ${totalShares.toLocaleString()}
+Total Reposts: ${totalReposts.toLocaleString()}
+Total Plays: ${totalPlays.toLocaleString()} (avg ${avgPlays}/post)
+
+== TOP 5 POSTS BY LIKES ==
+${top5str}
+
+== LOWEST 3 POSTS (lowlights) ==
+${bot3str}
+
+== CONTENT PATTERNS ==
+Top hashtags: ${topTags||'none detected'}
+Best day (by likes): ${bestDay}
+Most frequent posting hour: ${bestHour}:00
+
+== INSTRUCTIONS ==
+You are Clabstream AI, an expert TikTok analytics assistant.
+Answer user questions based ONLY on the data above. Be concise, insightful, and actionable.
+Format numbers with commas. Use bullet points for lists. Keep answers under 200 words unless the user asks for detail.
+`.trim();
+}
+
+function addUserMessage(text) {
+  const el = document.createElement('div');
+  el.className = 'chat-bubble user';
+  el.textContent = text;
+  document.getElementById('chatMessages').appendChild(el);
+  scrollChat();
+  return el;
+}
+
+function addAIMessage(text) {
+  const el = document.createElement('div');
+  el.className = 'chat-bubble ai';
+  el.innerHTML = formatAIText(text);
+  document.getElementById('chatMessages').appendChild(el);
+  scrollChat();
+  return el;
+}
+
+function addTyping() {
+  const el = document.createElement('div');
+  el.className = 'chat-bubble ai typing';
+  el.id = 'typingBubble';
+  el.textContent = 'Thinking';
+  document.getElementById('chatMessages').appendChild(el);
+  scrollChat();
+  return el;
+}
+
+function removeTyping() {
+  document.getElementById('typingBubble')?.remove();
+}
+
+function scrollChat() {
+  const box = document.getElementById('chatMessages');
+  box.scrollTop = box.scrollHeight;
+}
+
+function formatAIText(text) {
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/^[-•] (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs,'<ul>$1</ul>')
+    .replace(/\n/g,'<br>');
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('chatSend').disabled = true;
+  document.getElementById('chatSuggestions').style.display = 'none';
+
+  addUserMessage(text);
+  chatHistory.push({ role: 'user', parts: [{ text }] });
+
+  addTyping();
+
+  try {
+    const systemCtx = buildDataContext();
+    // Inject data context as the first user turn if history is fresh
+    const messages = chatHistory.length === 1
+      ? [{ role: 'user', parts: [{ text: systemCtx + '\n\nUser question: ' + text }] }]
+      : [
+          { role: 'user', parts: [{ text: systemCtx }] },
+          { role: 'model', parts: [{ text: 'Understood. I have your TikTok analytics data loaded. Ask me anything!' }] },
+          ...chatHistory
+        ];
+
+    const res = await fetch(GEMINI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: messages,
+        generationConfig: { temperature: 0.7, maxOutputTokens: 600 }
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err?.error?.message || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I got an empty response. Please try again.';
+
+    removeTyping();
+    addAIMessage(reply);
+    chatHistory.push({ role: 'model', parts: [{ text: reply }] });
+    // Keep history trimmed to last 10 turns to stay within token limits
+    if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+
+  } catch(err) {
+    removeTyping();
+    addAIMessage(`⚠️ Error: ${err.message}. Check your Gemini API key or internet connection.`);
+    console.error('[ClabAI]', err);
+  }
+
+  document.getElementById('chatSend').disabled = false;
+  input.focus();
 }
 </script>
 </body>
