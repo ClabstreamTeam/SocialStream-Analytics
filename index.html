@@ -1089,7 +1089,9 @@ function normalizeData(items, usernames, dateFilter) {
     // Flatten hashtags
     const hashtagFields = {};
     (item.hashtags||[]).forEach((h,i) => {
-      hashtagFields[`hashtags/${i}/name`] = h.name||h;
+      // h can be a string or an object {name, id, ...} — always coerce to string
+      const tagName = (typeof h === 'string' ? h : (h?.name || h?.title || '')).toString().trim();
+      if (tagName) hashtagFields[`hashtags/${i}/name`] = tagName;
     });
 
     // Video description snippet (for tooltip/title)
@@ -1302,7 +1304,8 @@ function processData(data) {
       hourSt[h]=(hourSt[h]||0)+1;
     }
     for(const k in row){
-      if(k.startsWith('hashtags/')&&k.endsWith('/name')&&row[k])
+      // Guard: only process string hashtag values (objects would throw on .toLowerCase)
+      if(k.startsWith('hashtags/')&&k.endsWith('/name')&&row[k]&&typeof row[k]==='string')
         hashSt[row[k].toLowerCase()]=(hashSt[row[k].toLowerCase()]||0)+1;
     }
   });
