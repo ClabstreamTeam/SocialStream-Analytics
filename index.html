@@ -1459,7 +1459,8 @@
             <div class="ai-inner" style="text-align:center;">
               <div
                 style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-muted);margin-bottom:8px;">
-                <i class="fa-solid fa-chart-line" style="color:#34d399;margin-right:4px;"></i>Median Plays</div>
+                <i class="fa-solid fa-chart-line" style="color:#34d399;margin-right:4px;"></i>Median Plays
+              </div>
               <div style="font-family:'Oxanium',sans-serif;font-size:26px;font-weight:700;color:white;">~<span
                   id="insight-median-plays">0</span></div>
               <div style="font-size:11px;color:var(--c-muted);margin-top:4px;">typical post reach</div>
@@ -1467,7 +1468,8 @@
             <div class="ai-inner" style="text-align:center;">
               <div
                 style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-muted);margin-bottom:8px;">
-                <i class="fa-solid fa-rocket" style="color:#34d399;margin-right:4px;"></i>P90 Plays</div>
+                <i class="fa-solid fa-rocket" style="color:#34d399;margin-right:4px;"></i>P90 Plays
+              </div>
               <div style="font-family:'Oxanium',sans-serif;font-size:26px;font-weight:700;color:#34d399;">~<span
                   id="insight-p90-plays">0</span></div>
               <div style="font-size:11px;color:var(--c-muted);margin-top:4px;">top 10% posts</div>
@@ -1475,7 +1477,8 @@
             <div class="ai-inner" style="text-align:center;">
               <div
                 style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-muted);margin-bottom:8px;">
-                <i class="fa-solid fa-clock" style="color:#60a5fa;margin-right:4px;"></i>Peak Reach Hour</div>
+                <i class="fa-solid fa-clock" style="color:#60a5fa;margin-right:4px;"></i>Peak Reach Hour
+              </div>
               <div style="font-family:'Oxanium',sans-serif;font-size:26px;font-weight:700;color:var(--c-orange2);"><span
                   id="insight-reach-hour">–</span>:00</div>
               <div style="font-size:11px;color:var(--c-muted);margin-top:4px;">~<span id="insight-reach-val">0</span>
@@ -1499,7 +1502,8 @@
               style="background:linear-gradient(135deg,rgba(251,191,36,0.07),rgba(249,115,22,0.04));border:1px solid rgba(251,191,36,0.18);border-radius:12px;padding:16px 18px;">
               <div
                 style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fbbf24;margin-bottom:12px;">
-                <i class="fa-solid fa-rocket" style="margin-right:5px;"></i>Boosted vs Organic</div>
+                <i class="fa-solid fa-rocket" style="margin-right:5px;"></i>Boosted vs Organic
+              </div>
               <div style="display:flex;flex-direction:column;gap:9px;font-size:13px;">
                 <div style="display:flex;justify-content:space-between;"><span style="color:#94a3b8;">Paid
                     (isAd)</span><strong style="color:#fbbf24;"><span id="exec-ad-count">0</span> posts</strong></div>
@@ -1509,7 +1513,8 @@
                 <div
                   style="display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,.05);padding-top:9px;">
                   <span style="color:#94a3b8;">Avg likes (boosted)</span><strong style="color:white;"><span
-                      id="exec-ad-avg-likes">–</span></strong></div>
+                      id="exec-ad-avg-likes">–</span></strong>
+                </div>
                 <div style="display:flex;justify-content:space-between;"><span style="color:#94a3b8;">Avg likes
                     (organic)</span><strong style="color:white;"><span id="exec-organic-avg-likes">–</span></strong>
                 </div>
@@ -1741,12 +1746,15 @@
 
       <!-- Raw Data Table -->
       <details class="card fade-in" style="margin-top:20px; overflow:hidden;">
-        <summary style="padding:22px 24px; cursor:pointer; font-family:'Oxanium',sans-serif; font-size:16px; font-weight:700; user-select:none; display:flex; align-items:center; gap:10px; outline:none; background:var(--c-card2); border-bottom:1px solid rgba(255,255,255,0.05);">
+        <summary
+          style="padding:22px 24px; cursor:pointer; font-family:'Oxanium',sans-serif; font-size:16px; font-weight:700; user-select:none; display:flex; align-items:center; gap:10px; outline:none; background:var(--c-card2); border-bottom:1px solid rgba(255,255,255,0.05);">
           <i class="fa-solid fa-table-list" style="color:var(--c-orange);"></i> Detailed Post Data
-          <span style="font-size:12px; color:var(--c-muted); font-weight:400; font-family:'DM Sans',sans-serif;">(Click to expand)</span>
+          <span style="font-size:12px; color:var(--c-muted); font-weight:400; font-family:'DM Sans',sans-serif;">(Click
+            to expand)</span>
         </summary>
         <div style="padding:0; overflow-x:auto;">
-          <table id="dataTable" style="width:100%; border-collapse:collapse; text-align:left; font-size:13px; white-space:nowrap;">
+          <table id="dataTable"
+            style="width:100%; border-collapse:collapse; text-align:left; font-size:13px; white-space:nowrap;">
             <thead>
               <tr style="background:rgba(255,255,255,0.03); border-bottom:1px solid rgba(255,255,255,0.08);">
                 <th style="padding:14px 20px; color:var(--c-muted); font-weight:600;">Date</th>
@@ -1770,16 +1778,31 @@
 
       <style>
         @media(max-width:900px) {
+
           #highlightCards,
           #lowlightCards {
             grid-template-columns: 1fr !important;
           }
         }
+
         /* DATA TABLE CSS */
-        #dataTable tbody tr { border-bottom: 1px solid rgba(255,255,255,0.05); transition: background .2s; }
-        #dataTable tbody tr:hover { background: rgba(255,255,255,0.02); }
-        #dataTable td { padding: 12px 20px; color: var(--c-text); }
-        details > summary::-webkit-details-marker { display:none; }
+        #dataTable tbody tr {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          transition: background .2s;
+        }
+
+        #dataTable tbody tr:hover {
+          background: rgba(255, 255, 255, 0.02);
+        }
+
+        #dataTable td {
+          padding: 12px 20px;
+          color: var(--c-text);
+        }
+
+        details>summary::-webkit-details-marker {
+          display: none;
+        }
       </style>
 
     </div><!-- /dashboardPanel -->
@@ -2921,7 +2944,7 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
         tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:20px; color:var(--c-muted);">No posts available.</td></tr>';
         return;
       }
-      
+
       const rows = data.map(r => {
         const dObj = parseDate(r.createTimeISO);
         const dateStr = dObj ? dObj.toLocaleDateString() : '-';
@@ -2929,7 +2952,7 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
         const desc = (r.desc || '').replace(/\n/g, ' ');
         const shortDesc = desc.length > 50 ? desc.substring(0, 47) + '...' : desc;
         const linkStr = r.videoUrl ? `<a href="${r.videoUrl}" target="_blank" style="color:var(--c-cyan);"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>` : '-';
-        const typeBadge = r.isAd 
+        const typeBadge = r.isAd
           ? `<span style="background:rgba(251,191,36,0.1); color:#fbbf24; padding:2px 8px; border-radius:10px; font-size:10px; border:1px solid rgba(251,191,36,0.3);">Boosted</span>`
           : `<span style="background:rgba(255,255,255,0.05); color:var(--c-muted); padding:2px 8px; border-radius:10px; font-size:10px; border:1px solid rgba(255,255,255,0.1);">Organic</span>`;
 
@@ -3071,12 +3094,9 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
 
       if (lastErr) {
         removeTyping();
-        const isQuota = lastErr.message.toLowerCase().includes('quota') || lastErr.message.includes('429') || lastErr.message.toLowerCase().includes('rate');
-        const friendly = isQuota
-          ? '⚠️ Rate limit reached on all available models. Please wait ~1 minute and try again.'
-          : `⚠️ Error: ${lastErr.message.slice(0, 120)}`;
-        addAIMessage(friendly);
-        console.error('[ClabAI]', lastErr);
+        // Print raw error directly
+        addAIMessage(`⚠️ API Error: ${lastErr.message}`);
+        console.error('[ClabAI RAW ERROR]', lastErr);
       }
 
       document.getElementById('chatSend').disabled = false;
