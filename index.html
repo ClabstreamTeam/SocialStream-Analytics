@@ -2918,12 +2918,12 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
       }
       
       const rows = data.map(r => {
-        const dObj = parseDate(r.date);
+        const dObj = parseDate(r.createTimeISO);
         const dateStr = dObj ? dObj.toLocaleDateString() : '-';
         // truncate description
-        const desc = (r.description || '').replace(/\n/g, ' ');
+        const desc = (r.desc || '').replace(/\n/g, ' ');
         const shortDesc = desc.length > 50 ? desc.substring(0, 47) + '...' : desc;
-        const linkStr = r.url ? `<a href="${r.url}" target="_blank" style="color:var(--c-cyan);"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>` : '-';
+        const linkStr = r.videoUrl ? `<a href="${r.videoUrl}" target="_blank" style="color:var(--c-cyan);"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>` : '-';
         const typeBadge = r.isAd 
           ? `<span style="background:rgba(251,191,36,0.1); color:#fbbf24; padding:2px 8px; border-radius:10px; font-size:10px; border:1px solid rgba(251,191,36,0.3);">Boosted</span>`
           : `<span style="background:rgba(255,255,255,0.05); color:var(--c-muted); padding:2px 8px; border-radius:10px; font-size:10px; border:1px solid rgba(255,255,255,0.1);">Organic</span>`;
@@ -2932,11 +2932,11 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
           <td>${dateStr}</td>
           <td style="color:var(--c-orange2);">@${r.profile || '?'}</td>
           <td title="${desc.replace(/"/g, '&quot;')}">${shortDesc}</td>
-          <td style="text-align:right;">${r.likes.toLocaleString()}</td>
-          <td style="text-align:right;">${r.plays.toLocaleString()}</td>
-          <td style="text-align:right;">${r.comments.toLocaleString()}</td>
-          <td style="text-align:right;">${(r.shares||0).toLocaleString()}</td>
-          <td style="text-align:right;">${(r.reposts||0).toLocaleString()}</td>
+          <td style="text-align:right;">${(r.diggCount || 0).toLocaleString()}</td>
+          <td style="text-align:right;">${(r.playCount || 0).toLocaleString()}</td>
+          <td style="text-align:right;">${(r.commentCount || 0).toLocaleString()}</td>
+          <td style="text-align:right;">${(r.shareCount || 0).toLocaleString()}</td>
+          <td style="text-align:right;">${(r.repostCount || 0).toLocaleString()}</td>
           <td style="text-align:center;">${typeBadge}</td>
           <td style="text-align:center;">${linkStr}</td>
         </tr>`;
