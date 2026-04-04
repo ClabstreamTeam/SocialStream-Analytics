@@ -323,6 +323,41 @@ body::after {
 /* RANGE INPUT */
 input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 5px; border-radius: 5px; background: rgba(255,255,255,0.1); outline: none; }
 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--c-orange); cursor: pointer; border: 2px solid var(--c-bg); box-shadow: 0 2px 8px rgba(249,115,22,0.4); }
+
+/* COVER CARD */
+.cover-card {
+  border-radius: 14px; overflow: hidden; position: relative;
+  background: var(--c-card2); border: 1px solid var(--c-border);
+  transition: transform .22s, border-color .22s, box-shadow .22s;
+  display: flex; flex-direction: column;
+}
+.cover-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
+.cover-card.highlight { border-color: rgba(16,185,129,0.35); }
+.cover-card.highlight:hover { border-color: rgba(16,185,129,0.7); box-shadow: 0 12px 40px rgba(16,185,129,0.15); }
+.cover-card.lowlight { border-color: rgba(244,63,94,0.3); }
+.cover-card.lowlight:hover { border-color: rgba(244,63,94,0.6); box-shadow: 0 12px 40px rgba(244,63,94,0.12); }
+.cover-thumb {
+  width: 100%; aspect-ratio: 9/16; object-fit: cover;
+  background: #0c0c1e; display: block;
+  transition: opacity .3s;
+}
+.cover-thumb-placeholder {
+  width: 100%; aspect-ratio: 9/16;
+  background: linear-gradient(160deg, #13132a, #1a0d2e);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  color: var(--c-muted); font-size: 28px;
+}
+.cover-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.cover-rank-badge {
+  position: absolute; top: 10px; left: 10px;
+  font-family: 'Oxanium', sans-serif; font-size: 12px; font-weight: 800;
+  padding: 4px 10px; border-radius: 999px; letter-spacing: .04em;
+}
+.cover-ad-badge {
+  position: absolute; top: 10px; right: 10px;
+  background: rgba(251,191,36,0.9); color: #1a1200;
+  font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 999px; letter-spacing:.04em;
+}
 </style>
 </head>
 <body>
@@ -661,6 +696,45 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px;
       <div style="position:relative;height:250px;"><canvas id="playsTimelineChart"></canvas></div>
       <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-plays">Waiting for data.</span></div>
     </div>
+
+    <!-- Highlights & Lowlights -->
+    <div class="card fade-in" id="hlSection" style="padding:28px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+        <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,rgba(16,185,129,.18),rgba(124,58,237,.1));border:1px solid rgba(16,185,129,.25);display:flex;align-items:center;justify-content:center;">
+          <i class="fa-solid fa-star" style="color:#34d399;font-size:15px;"></i>
+        </div>
+        <div>
+          <div class="font-display" style="font-family:'Oxanium',sans-serif;font-size:16px;font-weight:700;">Content Highlights &amp; Lowlights</div>
+          <div style="font-size:11px;color:var(--c-muted);">Top 3 best &amp; worst performing posts — with cover previews and analysis</div>
+        </div>
+      </div>
+
+      <!-- Highlights -->
+      <div style="margin-bottom:28px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+          <span style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:#34d399;font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px;letter-spacing:.06em;">
+            <i class="fa-solid fa-arrow-trend-up" style="margin-right:5px;"></i>HIGHLIGHTS
+          </span>
+          <span style="font-size:12px;color:var(--c-muted);">Top 3 posts by likes</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;" id="highlightCards"></div>
+      </div>
+
+      <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.07),transparent);margin-bottom:28px;"></div>
+
+      <!-- Lowlights -->
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+          <span style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.3);color:#fda4af;font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px;letter-spacing:.06em;">
+            <i class="fa-solid fa-arrow-trend-down" style="margin-right:5px;"></i>LOWLIGHTS
+          </span>
+          <span style="font-size:12px;color:var(--c-muted);">Bottom 3 posts by likes (min 100 plays)</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;" id="lowlightCards"></div>
+      </div>
+    </div>
+
+    <style>@media(max-width:900px){#highlightCards,#lowlightCards{grid-template-columns:1fr!important;}}</style>
 
   </div><!-- /dashboardPanel -->
 
@@ -1022,6 +1096,12 @@ function normalizeData(items, usernames, dateFilter) {
     const desc = (item.desc||item.text||'').slice(0,80);
 
     const isAd = !!(item.isAd || item.isPaid || item.sponsored || item.isSponsored || item.duetInfo?.isAd || false);
+    // Cover image — try multiple field names used by the clockworks scraper
+    const cover = item.covers?.[0] || item.coverImage || item.thumbnailUrl ||
+                  item.videoMeta?.cover || item.video?.cover ||
+                  item.musicMeta?.coverLarge || item.cover || '';
+    const videoUrl = item.webVideoUrl || item.shareUrl || item.url ||
+                     (authorId ? `https://www.tiktok.com/@${authorId}` : '');
     results.push({
       profile:       matchedUser,
       diggCount:     item.diggCount    ?? item.stats?.diggCount    ?? 0,
@@ -1032,7 +1112,7 @@ function normalizeData(items, usernames, dateFilter) {
       createTimeISO: createDate ? createDate.toISOString() : '',
       'authorMeta/name':     authorId,
       'authorMeta/nickName': authorNick,
-      isAd,
+      isAd, cover, videoUrl,
       desc,
       ...hashtagFields,
     });
@@ -1209,7 +1289,7 @@ function processData(data) {
     const l=Number(row.diggCount||0),c=Number(row.commentCount||0),
           s=Number(row.collectCount||0),p=Number(row.playCount||0);
     likes+=l; comments+=c; saves+=s;
-    topPosts.push({desc:row.desc||'(no description)',likes:l,plays:p,isAd:row.isAd});
+    topPosts.push({desc:row.desc||'(no description)',likes:l,plays:p,isAd:row.isAd,cover:row.cover||'',videoUrl:row.videoUrl||'',profile:row.profile,commentCount:c,collectCount:s,shareCount:Number(row.shareCount||0),createTimeISO:row.createTimeISO});
     const d=parseDate(row.createTimeISO);
     if(d){
       const ds=d.toISOString().split('T')[0];
@@ -1238,6 +1318,7 @@ function processData(data) {
   renderDays(daysSt);
   renderEngPP(engPP);
   renderHours(hourSt);
+  renderHighlightsLowlights(topPosts);
 }
 
 /* ══════════════════════════════════
@@ -1355,6 +1436,92 @@ function renderEngPP(engPP) {
   },options:{...CHART_OPTS}});
 }
 
+/* ══════════════════════════════════
+   HIGHLIGHTS & LOWLIGHTS
+══════════════════════════════════ */
+function renderHighlightsLowlights(posts) {
+  const sorted = [...posts].sort((a,b)=>b.likes-a.likes);
+  const highlights = sorted.slice(0,3);
+  // Lowlights: posts with at least 100 plays, sorted by likes ascending, skip any already in highlights
+  const hSet = new Set(highlights.map(p=>p.desc+p.likes));
+  const lowlights = [...posts]
+    .filter(p=>p.plays>=100 && !hSet.has(p.desc+p.likes))
+    .sort((a,b)=>a.likes-b.likes)
+    .slice(0,3);
+
+  const medLikes = highlights.length ? highlights[Math.floor(highlights.length/2)].likes : 1;
+  const totalLikes = posts.reduce((s,p)=>s+p.likes,0);
+  const avgLikes = posts.length ? totalLikes/posts.length : 0;
+
+  function whyHighlight(p, rank) {
+    const ratio = avgLikes>0?(p.likes/avgLikes).toFixed(1):0;
+    const engRate = p.plays>0?((p.likes+p.commentCount+p.collectCount+p.shareCount)/p.plays*100).toFixed(2):0;
+    const parts = [];
+    if(ratio>2) parts.push(`Earned <strong>${ratio}× the avg likes</strong> across all posts.`);
+    else parts.push(`<strong>${fmt(p.likes)} likes</strong> puts this in the top tier.`);
+    if(engRate>0) parts.push(`Engagement rate of <strong>${engRate}%</strong> vs plays.`);
+    if(p.isAd) parts.push('Paid amplification helped broaden reach.');
+    if(p.shareCount>0) parts.push(`<strong>${fmt(p.shareCount)} shares</strong> indicate strong virality potential.`);
+    if(p.collectCount>0) parts.push(`<strong>${fmt(p.collectCount)} saves</strong> — high intent signal.`);
+    return parts.slice(0,2).join(' ');
+  }
+  function whyLowlight(p) {
+    const ratio = avgLikes>0?(p.likes/avgLikes).toFixed(2):0;
+    const engRate = p.plays>0?((p.likes+p.commentCount+p.collectCount+p.shareCount)/p.plays*100).toFixed(2):0;
+    const parts = [];
+    if(ratio<0.5) parts.push(`Only <strong>${ratio}× the avg likes</strong> — significantly below par.`);
+    else parts.push(`<strong>${fmt(p.likes)} likes</strong> against ${fmt(p.plays)} plays is low conversion.`);
+    if(engRate<1) parts.push(`Engagement rate of <strong>${engRate}%</strong> — consider reviewing hook or format.`);
+    if(!p.isAd) parts.push('No paid boost; organic reach was limited.');
+    if(p.commentCount<2) parts.push('Minimal comment activity suggests low resonance with audience.');
+    return parts.slice(0,2).join(' ');
+  }
+
+  function buildCard(p, rank, type) {
+    const isHL = type==='highlight';
+    const rankColor = isHL ? '#34d399' : '#f43f5e';
+    const rankBg = isHL ? 'rgba(16,185,129,0.85)' : 'rgba(244,63,94,0.85)';
+    const rankLabel = isHL ? `#${rank} Highlight` : `#${rank} Lowlight`;
+    const reason = isHL ? whyHighlight(p, rank) : whyLowlight(p);
+    const dateStr = p.createTimeISO ? new Date(p.createTimeISO).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '';
+    const thumbHtml = p.cover
+      ? `<img src="${p.cover}" class="cover-thumb" alt="cover" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+         <div class="cover-thumb-placeholder" style="display:none;"><i class="fa-brands fa-tiktok"></i><span style="font-size:12px;">No preview</span></div>`
+      : `<div class="cover-thumb-placeholder"><i class="fa-brands fa-tiktok"></i><span style="font-size:12px;">No cover</span></div>`;
+    const linkHtml = p.videoUrl
+      ? `<a href="${p.videoUrl}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--c-orange2);text-decoration:none;border:1px solid rgba(249,115,22,0.25);padding:5px 10px;border-radius:6px;transition:background .2s;" onmouseover="this.style.background='rgba(249,115,22,0.1)'" onmouseout="this.style.background=''"><i class="fa-brands fa-tiktok"></i> View Post</a>`
+      : '';
+    return `<div class="cover-card ${type}">
+      <div style="position:relative;">
+        ${thumbHtml}
+        <div class="cover-rank-badge" style="background:${rankBg};color:white;">${rankLabel}</div>
+        ${p.isAd ? '<div class="cover-ad-badge">🚀 Ad</div>' : ''}
+      </div>
+      <div class="cover-body">
+        <div style="font-size:11px;color:var(--c-muted);">${dateStr?`<i class="fa-regular fa-calendar" style="margin-right:4px;"></i>${dateStr} · `:''}<span style="color:#94a3b8;">@${p.profile}</span></div>
+        <div style="font-size:12px;color:#cbd5e1;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${p.desc||'(no description)'}</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px;">
+          <span style="color:#fda4af;"><i class="fa-solid fa-heart" style="margin-right:3px;"></i>${fmt(p.likes)}</span>
+          <span style="color:#94a3b8;"><i class="fa-solid fa-play" style="margin-right:3px;"></i>${fmt(p.plays)}</span>
+          <span style="color:#86efac;"><i class="fa-solid fa-comment" style="margin-right:3px;"></i>${fmt(p.commentCount)}</span>
+        </div>
+        <div style="background:${isHL?'rgba(16,185,129,0.06)':'rgba(244,63,94,0.06)'};border:1px solid ${isHL?'rgba(16,185,129,0.15)':'rgba(244,63,94,0.15)'};border-radius:8px;padding:10px 12px;font-size:11.5px;color:#94a3b8;line-height:1.6;">
+          <strong style="color:${isHL?'#34d399':'#fda4af'};display:block;margin-bottom:4px;font-size:10px;letter-spacing:.06em;text-transform:uppercase;">${isHL?'Why it works':'Why it underperformed'}</strong>
+          ${reason}
+        </div>
+        ${linkHtml}
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('highlightCards').innerHTML =
+    highlights.length ? highlights.map((p,i)=>buildCard(p,i+1,'highlight')).join('')
+    : '<p style="color:var(--c-muted);font-size:13px;">No data available.</p>';
+  document.getElementById('lowlightCards').innerHTML =
+    lowlights.length ? lowlights.map((p,i)=>buildCard(p,i+1,'lowlight')).join('')
+    : '<p style="color:var(--c-muted);font-size:13px;">Not enough posts with play data to determine lowlights.</p>';
+}
+
 function renderHours(hourSt) {
   destroyChart('hourChart');
   const hours=Array.from({length:24},(_,i)=>i.toString().padStart(2,'0'));
@@ -1400,7 +1567,9 @@ function loadDemoData() {
     const profile=profiles[i%profiles.length];
     const d=new Date(now-Math.random()*30*86400000);
     const plays=Math.floor(Math.random()*800000+1000);
-    const isAd=Math.random()<0.18; // ~18% boosted
+    const isAd=Math.random()<0.18;
+    // Placeholder covers using picsum for demo (portrait ratio)
+    const coverSeed = (i * 37 + profile.length) % 1000;
     const item={
       profile,
       diggCount:Math.floor(plays*(isAd?0.09:0.04)+Math.random()*plays*0.06),
@@ -1411,6 +1580,8 @@ function loadDemoData() {
       createTimeISO:d.toISOString(),
       'authorMeta/name':profile,
       isAd,
+      cover:`https://picsum.photos/seed/${coverSeed}/360/640`,
+      videoUrl:`https://www.tiktok.com/@${profile}`,
       desc:`${isAd?'[Ad] ':''}Demo post for @${profile} featuring #${tags[i%tags.length]}`,
     };
     tags.slice(0,3+i%4).forEach((t,j)=>{item[`hashtags/${j}/name`]=t;});
