@@ -849,9 +849,11 @@
       bottom: 28px;
       right: 28px;
       z-index: 9998;
-      width: 56px;
+      width: auto;
       height: 56px;
-      border-radius: 50%;
+      padding: 0 24px;
+      gap: 10px;
+      border-radius: 999px;
       background: var(--grad);
       border: none;
       cursor: pointer;
@@ -859,7 +861,9 @@
       display: none;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'Oxanium', sans-serif;
       color: white;
       transition: transform .25s, box-shadow .25s;
       animation: fabPop .35s cubic-bezier(.34, 1.56, .64, 1);
@@ -1785,13 +1789,13 @@
 
   <!-- ══ AI CHAT WIDGET ══ -->
   <button id="chatFab" onclick="toggleChat()" title="Ask AI about your data">
-    <i class="fa-solid fa-robot"></i>
+    <i class="fa-solid fa-wand-magic-sparkles"></i> AI Ask
     <span class="fab-badge" id="chatBadge" style="display:none;">!</span>
   </button>
 
   <div id="chatPanel">
     <div class="chat-header">
-      <div class="chat-gem-icon"><i class="fa-solid fa-robot"></i></div>
+      <div class="chat-gem-icon" style="font-family:'Oxanium',sans-serif;font-weight:800;font-size:12px;">AI</div>
       <div style="flex:1;">
         <div style="font-family:'Oxanium',sans-serif;font-size:14px;font-weight:700;">Clabstream AI</div>
         <div style="font-size:11px;color:var(--c-muted);">Powered by Gemini · Ask about your data</div>
@@ -2791,11 +2795,12 @@
        GEMINI AI CHAT ASSISTANT
     ══════════════════════════════════ */
     const GEMINI_KEY = 'AIzaSyDbjsB_hehwzzHU0pJ4LlQZsHa7bZbELwI';
-    // Primary: Gemma 4 26B A4B IT (MoE, confirmed model ID via API listing)
-    // Fallback: gemini-1.5-flash (reliable free tier)
+    // Deep fallback chain to completely circumvent rate limits
     const GEMINI_MODELS = [
-      'gemma-4-26b-a4b-it',
+      'gemma-2-27b-it',
+      'gemini-2.0-flash-exp',
       'gemini-1.5-flash',
+      'gemini-1.5-flash-8b'
     ];
     const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 
@@ -3027,10 +3032,10 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
           if (!res.ok) {
             const err = await res.json().catch(() => ({}));
             const msg = err?.error?.message || `HTTP ${res.status}`;
-            const isQuota = msg.toLowerCase().includes('quota') || res.status === 429 || res.status === 403;
+            const isQuota = msg.toLowerCase().includes('quota') || res.status === 429 || res.status === 403 || res.status === 404 || res.status === 400;
             if (isQuota && idx + 1 < GEMINI_MODELS.length) {
               // Try next model
-              console.warn(`[ClabAI] ${model} quota exceeded, trying ${GEMINI_MODELS[idx + 1]}…`);
+              console.warn(`[ClabAI] ${model} unavailable, trying ${GEMINI_MODELS[idx + 1]}…`);
               lastErr = new Error(msg);
               continue;
             }
