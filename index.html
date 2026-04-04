@@ -2216,14 +2216,14 @@
           (authorId ? `https://www.tiktok.com/@${authorId}` : '');
         results.push({
           profile: matchedUser,
-          diggCount: item.diggCount ?? item.stats?.diggCount ?? 0,
-          commentCount: item.commentCount ?? item.stats?.commentCount ?? 0,
-          collectCount: item.collectCount ?? item.stats?.collectCount ?? 0,
-          shareCount: item.shareCount ?? item.stats?.shareCount ?? 0,
-          playCount: item.playCount ?? item.stats?.playCount ?? 0,
+          diggCount: Number(item.diggCount ?? item.stats?.diggCount ?? item.statsV2?.diggCount ?? 0),
+          commentCount: Number(item.commentCount ?? item.stats?.commentCount ?? item.statsV2?.commentCount ?? 0),
+          collectCount: Number(item.collectCount ?? item.stats?.collectCount ?? item.statsV2?.collectCount ?? 0),
+          shareCount: Number(item.shareCount ?? item.stats?.shareCount ?? item.statsV2?.shareCount ?? 0),
+          playCount: Number(item.playCount ?? item.stats?.playCount ?? item.statsV2?.playCount ?? 0),
           // Repost count — TikTok field names vary by scraper version
-          repostCount: item.repostCount ?? item.forwardCount ?? item.reshareCount ??
-            item.stats?.repostCount ?? item.statsV2?.repostCount ?? 0,
+          repostCount: Number(item.repostCount ?? item.forwardCount ?? item.reshareCount ??
+            item.stats?.repostCount ?? item.statsV2?.repostCount ?? 0),
           createTimeISO: createDate ? createDate.toISOString() : '',
           'authorMeta/name': authorId,
           'authorMeta/nickName': authorNick,
@@ -2932,11 +2932,11 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
           <td>${dateStr}</td>
           <td style="color:var(--c-orange2);">@${r.profile || '?'}</td>
           <td title="${desc.replace(/"/g, '&quot;')}">${shortDesc}</td>
-          <td style="text-align:right;">${(r.diggCount || 0).toLocaleString()}</td>
-          <td style="text-align:right;">${(r.playCount || 0).toLocaleString()}</td>
-          <td style="text-align:right;">${(r.commentCount || 0).toLocaleString()}</td>
-          <td style="text-align:right;">${(r.shareCount || 0).toLocaleString()}</td>
-          <td style="text-align:right;">${(r.repostCount || 0).toLocaleString()}</td>
+          <td style="text-align:right;">${Number(r.diggCount || 0).toLocaleString()}</td>
+          <td style="text-align:right;">${Number(r.playCount || 0).toLocaleString()}</td>
+          <td style="text-align:right;">${Number(r.commentCount || 0).toLocaleString()}</td>
+          <td style="text-align:right;">${Number(r.shareCount || 0).toLocaleString()}</td>
+          <td style="text-align:right;">${Number(r.repostCount || 0).toLocaleString()}</td>
           <td style="text-align:center;">${typeBadge}</td>
           <td style="text-align:center;">${linkStr}</td>
         </tr>`;
