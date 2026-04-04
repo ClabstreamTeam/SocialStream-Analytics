@@ -1866,11 +1866,18 @@ function loadDemoData() {
    GEMINI AI CHAT ASSISTANT
 ══════════════════════════════════ */
 const GEMINI_KEY = 'AIzaSyDbjsB_hehwzzHU0pJ4LlQZsHa7bZbELwI';
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
+// Primary: Gemma 4 26B A4B IT (MoE, confirmed model ID via API listing)
+// Fallback: gemini-1.5-flash (reliable free tier)
+const GEMINI_MODELS = [
+  'gemma-4-26b-a4b-it',
+  'gemini-1.5-flash',
+];
+const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 let chatHistory = [];
 let chatOpen = false;
 let chatInitialized = false;
+let activeModelIdx = 0; // tracks which model is currently working
 
 function showChatFab() {
   const fab = document.getElementById('chatFab');
@@ -2033,51 +2040,80 @@ async function sendChat() {
 
   addUserMessage(text);
   chatHistory.push({ role: 'user', parts: [{ text }] });
-
   addTyping();
 
-  try {
-    const systemCtx = buildDataContext();
-    // Inject data context as the first user turn if history is fresh
-    const messages = chatHistory.length === 1
-      ? [{ role: 'user', parts: [{ text: systemCtx + '\n\nUser question: ' + text }] }]
-      : [
-          { role: 'user', parts: [{ text: systemCtx }] },
-          { role: 'model', parts: [{ text: 'Understood. I have your TikTok analytics data loaded. Ask me anything!' }] },
-          ...chatHistory
-        ];
+  const systemCtx = buildDataContext();
+  const messages = chatHistory.length === 1
+    ? [{ role: 'user', parts: [{ text: systemCtx + '\n\nUser question: ' + text }] }]
+    : [
+        { role: 'user', parts: [{ text: systemCtx }] },
+        { role: 'model', parts: [{ text: 'Understood. I have your TikTok analytics data loaded. Ask me anything!' }] },
+        ...chatHistory
+      ];
 
-    const res = await fetch(GEMINI_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: messages,
-        generationConfig: { temperature: 0.7, maxOutputTokens: 400 }
-      })
-    });
+  // Try models in order, fall back on quota/unavailability
+  let lastErr = null;
+  for (let idx = activeModelIdx; idx < GEMINI_MODELS.length; idx++) {
+    const model = GEMINI_MODELS[idx];
+    const url = `${GEMINI_BASE}/${model}:generateContent?key=${GEMINI_KEY}`;
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: messages,
+          generationConfig: { temperature: 0.7, maxOutputTokens: 400 }
+        })
+      });
 
-    if (!res.ok) {
-      const err = await res.json().catch(()=>({}));
-      throw new Error(err?.error?.message || `HTTP ${res.status}`);
+      if (!res.ok) {
+        const err = await res.json().catch(()=>({}));
+        const msg = err?.error?.message || `HTTP ${res.status}`;
+        const isQuota = msg.toLowerCase().includes('quota') || res.status === 429 || res.status === 403;
+        if (isQuota && idx + 1 < GEMINI_MODELS.length) {
+          // Try next model
+          console.warn(`[ClabAI] ${model} quota exceeded, trying ${GEMINI_MODELS[idx+1]}…`);
+          lastErr = new Error(msg);
+          continue;
+        }
+        throw new Error(msg);
+      }
+
+      const data = await res.json();
+      const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text
+        || 'Sorry, I got an empty response. Please try again.';
+
+      // Persist which model worked
+      if (idx !== activeModelIdx) {
+        activeModelIdx = idx;
+        // Update header subtitle
+        document.querySelector('#chatPanel .chat-header div:nth-child(2) div:last-child').textContent =
+          `Powered by ${model} · Ask about your data`;
+      }
+
+      removeTyping();
+      addAIMessage(reply);
+      chatHistory.push({ role: 'model', parts: [{ text: reply }] });
+      if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+      lastErr = null;
+      break;
+
+    } catch(err) {
+      lastErr = err;
+      const isQuota = err.message.toLowerCase().includes('quota') || err.message.includes('429');
+      if (isQuota && idx + 1 < GEMINI_MODELS.length) continue;
+      break;
     }
+  }
 
-    const data = await res.json();
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I got an empty response. Please try again.';
-
+  if (lastErr) {
     removeTyping();
-    addAIMessage(reply);
-    chatHistory.push({ role: 'model', parts: [{ text: reply }] });
-    // Keep history trimmed to last 10 turns to stay within token limits
-    if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
-
-  } catch(err) {
-    removeTyping();
-    const isQuota = err.message.toLowerCase().includes('quota') || err.message.includes('429') || err.message.toLowerCase().includes('rate');
+    const isQuota = lastErr.message.toLowerCase().includes('quota') || lastErr.message.includes('429') || lastErr.message.toLowerCase().includes('rate');
     const friendly = isQuota
-      ? '⚠️ Rate limit reached on the free tier. Please wait ~1 minute and try again. (Gemini 1.5 Flash free tier: 15 requests/min)'
-      : `⚠️ Error: ${err.message.slice(0,120)}`;
+      ? '⚠️ Rate limit reached on all available models. Please wait ~1 minute and try again.'
+      : `⚠️ Error: ${lastErr.message.slice(0, 120)}`;
     addAIMessage(friendly);
-    console.error('[ClabAI]', err);
+    console.error('[ClabAI]', lastErr);
   }
 
   document.getElementById('chatSend').disabled = false;
