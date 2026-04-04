@@ -1866,7 +1866,7 @@ function loadDemoData() {
    GEMINI AI CHAT ASSISTANT
 ══════════════════════════════════ */
 const GEMINI_KEY = 'AIzaSyDbjsB_hehwzzHU0pJ4LlQZsHa7bZbELwI';
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
 
 let chatHistory = [];
 let chatOpen = false;
@@ -1914,13 +1914,13 @@ function buildDataContext() {
   const minDate = dates.length ? new Date(Math.min(...dates)).toISOString().split('T')[0] : 'N/A';
   const maxDate = dates.length ? new Date(Math.max(...dates)).toISOString().split('T')[0] : 'N/A';
 
-  // Top 5 posts by likes
-  const top5 = [...globalData].sort((a,b)=>Number(b.diggCount||0)-Number(a.diggCount||0)).slice(0,5);
-  const top5str = top5.map((p,i)=>`${i+1}. "${(p.desc||'').slice(0,60)}" — ${Number(p.diggCount||0).toLocaleString()} likes, ${Number(p.playCount||0).toLocaleString()} plays (@${p.profile})`).join('\n');
+  // Top 3 posts by likes (trimmed to save tokens)
+  const top5 = [...globalData].sort((a,b)=>Number(b.diggCount||0)-Number(a.diggCount||0)).slice(0,3);
+  const top5str = top5.map((p,i)=>`${i+1}. "${(p.desc||'').slice(0,45)}" — ${Number(p.diggCount||0).toLocaleString()} likes, ${Number(p.playCount||0).toLocaleString()} plays (@${p.profile})`).join('\n');
 
-  // Bottom 3 posts by likes (with plays >=100)
+  // Bottom 3 posts
   const bot3 = [...globalData].filter(r=>Number(r.playCount||0)>=100).sort((a,b)=>Number(a.diggCount||0)-Number(b.diggCount||0)).slice(0,3);
-  const bot3str = bot3.map((p,i)=>`${i+1}. "${(p.desc||'').slice(0,60)}" — ${Number(p.diggCount||0).toLocaleString()} likes, ${Number(p.playCount||0).toLocaleString()} plays (@${p.profile})`).join('\n');
+  const bot3str = bot3.map((p,i)=>`${i+1}. "${(p.desc||'').slice(0,45)}" — ${Number(p.diggCount||0).toLocaleString()} likes, ${Number(p.playCount||0).toLocaleString()} plays (@${p.profile})`).join('\n');
 
   // Hashtag frequency
   const hashSt={};
@@ -2052,7 +2052,7 @@ async function sendChat() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: messages,
-        generationConfig: { temperature: 0.7, maxOutputTokens: 600 }
+        generationConfig: { temperature: 0.7, maxOutputTokens: 400 }
       })
     });
 
@@ -2072,7 +2072,11 @@ async function sendChat() {
 
   } catch(err) {
     removeTyping();
-    addAIMessage(`⚠️ Error: ${err.message}. Check your Gemini API key or internet connection.`);
+    const isQuota = err.message.toLowerCase().includes('quota') || err.message.includes('429') || err.message.toLowerCase().includes('rate');
+    const friendly = isQuota
+      ? '⚠️ Rate limit reached on the free tier. Please wait ~1 minute and try again. (Gemini 1.5 Flash free tier: 15 requests/min)'
+      : `⚠️ Error: ${err.message.slice(0,120)}`;
+    addAIMessage(friendly);
     console.error('[ClabAI]', err);
   }
 
