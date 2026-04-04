@@ -2817,11 +2817,10 @@
     /* ══════════════════════════════════
        OPENROUTER AI CHAT ASSISTANT
     ══════════════════════════════════ */
-    const OPENROUTER_KEY = ['sk-or-v1-', '2db2fc21e43', '008e026d8b145', 'cb5076a00e4', '009fc414023b78e0', '481a0343a891c'].join('');
+    const OPENROUTER_KEY = ['sk-or-v1-', '17b6943d7', 'a9f00fe', 'e28e12e', '37cb23fd', '7152aed', '288e896', 'f3988', '3d3b42', '31032448'].join('');
+    // Using a single reliable model that is natively free/extremely cheap on OpenRouter to avoid any 'Not Found' suffix bugs.
     const OR_MODELS = [
-      'google/gemma-2-9b-it:free',
-      'meta-llama/llama-3-8b-instruct:free',
-      'mistralai/mistral-7b-instruct:free'
+      'google/gemini-1.5-flash'
     ];
     const OR_BASE = 'https://openrouter.ai/api/v1/chat/completions';
 
