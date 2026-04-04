@@ -1232,6 +1232,28 @@
       border-radius: 999px;
       letter-spacing: .04em;
     }
+
+    /* DOWNLOAD BUTTONS */
+    .btn-download-small {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-download-small:hover {
+      background: rgba(249, 115, 22, 0.1);
+      border-color: rgba(249, 115, 22, 0.3);
+      color: var(--c-orange2);
+    }
   </style>
 </head>
 
@@ -1535,8 +1557,15 @@
 
       <!-- Profile Comparison (multi-user) -->
       <div id="profileComparisonContainer" class="card fade-in" style="padding:24px;display:none;">
-        <div class="chart-section-label">Overview</div>
-        <div class="chart-title">Profile Comparison — Total Likes</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div class="chart-section-label">Overview</div>
+            <div class="chart-title">Profile Comparison — Total Likes</div>
+          </div>
+          <button onclick="downloadChartImage('profileComparisonChart')" class="btn-download-small print-hidden">
+            <i class="fa-solid fa-download"></i> PNG
+          </button>
+        </div>
         <div style="position:relative;height:240px;"><canvas id="profileComparisonChart"></canvas></div>
       </div>
 
@@ -1619,15 +1648,29 @@
       <!-- Charts Row 1 -->
       <div class="grid-2 fade-in">
         <div class="card" style="padding:24px;">
-          <div class="chart-section-label">Top Posts</div>
-          <div class="chart-title">Best Performing Videos by Likes</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div class="chart-section-label">Top Posts</div>
+              <div class="chart-title">Best Performing Videos by Likes</div>
+            </div>
+            <button onclick="downloadChartImage('topPostsChart')" class="btn-download-small print-hidden">
+              <i class="fa-solid fa-download"></i> PNG
+            </button>
+          </div>
           <div style="position:relative;height:250px;"><canvas id="topPostsChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-topPosts">Waiting for data.</span>
           </div>
         </div>
         <div class="card" style="padding:24px;">
-          <div class="chart-section-label">Efficiency Trend</div>
-          <div class="chart-title">Avg Engagement Per Post (Timeline)</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div class="chart-section-label">Efficiency Trend</div>
+              <div class="chart-title">Avg Engagement Per Post (Timeline)</div>
+            </div>
+            <button onclick="downloadChartImage('engPerPostChart')" class="btn-download-small print-hidden">
+              <i class="fa-solid fa-download"></i> PNG
+            </button>
+          </div>
           <div style="position:relative;height:250px;"><canvas id="engPerPostChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-engPerPost">Waiting for data.</span>
           </div>
@@ -1637,14 +1680,28 @@
       <!-- Charts Row 2 -->
       <div class="grid-1-2 fade-in">
         <div class="card" style="padding:24px;">
-          <div class="chart-section-label">Interaction Mix</div>
-          <div class="chart-title">Engagement Split</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div class="chart-section-label">Interaction Mix</div>
+              <div class="chart-title">Engagement Split</div>
+            </div>
+            <button onclick="downloadChartImage('engagementPieChart')" class="btn-download-small print-hidden">
+              <i class="fa-solid fa-download"></i> PNG
+            </button>
+          </div>
           <div style="position:relative;height:230px;"><canvas id="engagementPieChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-pie">Waiting for data.</span></div>
         </div>
         <div class="card" style="padding:24px;">
-          <div class="chart-section-label">Weekly Pattern</div>
-          <div class="chart-title">Engagement by Day of Week</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div class="chart-section-label">Weekly Pattern</div>
+              <div class="chart-title">Engagement by Day of Week</div>
+            </div>
+            <button onclick="downloadChartImage('dayOfWeekChart')" class="btn-download-small print-hidden">
+              <i class="fa-solid fa-download"></i> PNG
+            </button>
+          </div>
           <div style="position:relative;height:230px;"><canvas id="dayOfWeekChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-day">Waiting for data.</span></div>
         </div>
@@ -1653,15 +1710,29 @@
       <!-- Charts Row 3 -->
       <div class="grid-2 fade-in">
         <div class="card" style="padding:24px;">
-          <div class="chart-section-label">Content Strategy</div>
-          <div class="chart-title">Top Hashtags Used</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div class="chart-section-label">Content Strategy</div>
+              <div class="chart-title">Top Hashtags Used</div>
+            </div>
+            <button onclick="downloadChartImage('hashtagChart')" class="btn-download-small print-hidden">
+              <i class="fa-solid fa-download"></i> PNG
+            </button>
+          </div>
           <div style="position:relative;height:250px;"><canvas id="hashtagChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-hashtag">Waiting for data.</span>
           </div>
         </div>
         <div class="card" style="padding:24px;">
-          <div class="chart-section-label">Hourly Heatmap</div>
-          <div class="chart-title">Posts by Hour of Day</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div class="chart-section-label">Hourly Heatmap</div>
+              <div class="chart-title">Posts by Hour of Day</div>
+            </div>
+            <button onclick="downloadChartImage('hourChart')" class="btn-download-small print-hidden">
+              <i class="fa-solid fa-download"></i> PNG
+            </button>
+          </div>
           <div style="position:relative;height:250px;"><canvas id="hourChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-hour">Waiting for data.</span></div>
         </div>
@@ -1669,16 +1740,30 @@
 
       <!-- Timeline (full width) -->
       <div class="card fade-in" style="padding:24px;">
-        <div class="chart-section-label">Campaign Performance</div>
-        <div class="chart-title">Likes Over Time</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div class="chart-section-label">Campaign Performance</div>
+            <div class="chart-title">Likes Over Time</div>
+          </div>
+          <button onclick="downloadChartImage('timelineChart')" class="btn-download-small print-hidden">
+            <i class="fa-solid fa-download"></i> PNG
+          </button>
+        </div>
         <div style="position:relative;height:290px;"><canvas id="timelineChart"></canvas></div>
         <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-timeline">Waiting for data.</span></div>
       </div>
 
       <!-- Play Rate Chart -->
       <div class="card fade-in" style="padding:24px;">
-        <div class="chart-section-label">Reach Performance</div>
-        <div class="chart-title">Play Count Distribution Over Time</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div class="chart-section-label">Reach Performance</div>
+            <div class="chart-title">Play Count Distribution Over Time</div>
+          </div>
+          <button onclick="downloadChartImage('playsTimelineChart')" class="btn-download-small print-hidden">
+            <i class="fa-solid fa-download"></i> PNG
+          </button>
+        </div>
         <div style="position:relative;height:250px;"><canvas id="playsTimelineChart"></canvas></div>
         <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-plays">Waiting for data.</span></div>
       </div>
@@ -1686,14 +1771,28 @@
       <!-- Shares & Reposts Charts -->
       <div class="grid-2 fade-in">
         <div class="card" style="padding:24px;">
-          <div class="chart-section-label">Distribution Activity</div>
-          <div class="chart-title">Shares Over Time</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div class="chart-section-label">Distribution Activity</div>
+              <div class="chart-title">Shares Over Time</div>
+            </div>
+            <button onclick="downloadChartImage('sharesTimelineChart')" class="btn-download-small print-hidden">
+              <i class="fa-solid fa-download"></i> PNG
+            </button>
+          </div>
           <div style="position:relative;height:250px;"><canvas id="sharesTimelineChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-shares">Waiting for data.</span></div>
         </div>
         <div class="card" style="padding:24px;">
-          <div class="chart-section-label">Virality Signal</div>
-          <div class="chart-title">Reposts Over Time</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div class="chart-section-label">Virality Signal</div>
+              <div class="chart-title">Reposts Over Time</div>
+            </div>
+            <button onclick="downloadChartImage('repostsTimelineChart')" class="btn-download-small print-hidden">
+              <i class="fa-solid fa-download"></i> PNG
+            </button>
+          </div>
           <div style="position:relative;height:250px;"><canvas id="repostsTimelineChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-reposts">Waiting for data.</span>
           </div>
@@ -1751,6 +1850,9 @@
           <i class="fa-solid fa-table-list" style="color:var(--c-orange);"></i> Detailed Post Data
           <span style="font-size:12px; color:var(--c-muted); font-weight:400; font-family:'DM Sans',sans-serif;">(Click
             to expand)</span>
+          <button onclick="downloadTableCSV(event)" class="btn-download-small" style="margin-left:auto;">
+            <i class="fa-solid fa-file-csv"></i> Download CSV
+          </button>
         </summary>
         <div style="padding:0; overflow-x:auto;">
           <table id="dataTable"
@@ -1763,8 +1865,10 @@
                 <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:right;">Likes</th>
                 <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:right;">Plays</th>
                 <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:right;">Comments</th>
+                <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:right;">Saves</th>
                 <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:right;">Shares</th>
                 <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:right;">Reposts</th>
+                <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:right;">ER%</th>
                 <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:center;">Type</th>
                 <th style="padding:14px 20px; color:var(--c-muted); font-weight:600; text-align:center;">Link</th>
               </tr>
@@ -2937,7 +3041,7 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
     function renderDataTable(data) {
       const tbody = document.getElementById('dataTableBody');
       if (!data || !data.length) {
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:20px; color:var(--c-muted);">No posts available.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; color:var(--c-muted);">No posts available.</td></tr>';
         return;
       }
 
@@ -2952,15 +3056,21 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
           ? `<span style="background:rgba(251,191,36,0.1); color:#fbbf24; padding:2px 8px; border-radius:10px; font-size:10px; border:1px solid rgba(251,191,36,0.3);">Boosted</span>`
           : `<span style="background:rgba(255,255,255,0.05); color:var(--c-muted); padding:2px 8px; border-radius:10px; font-size:10px; border:1px solid rgba(255,255,255,0.1);">Organic</span>`;
 
+        const plays = Number(r.playCount || 0);
+        const lcs = Number(r.diggCount || 0) + Number(r.commentCount || 0) + Number(r.collectCount || 0) + Number(r.shareCount || 0);
+        const er = plays > 0 ? ((lcs / plays) * 100).toFixed(2) : '0.00';
+
         return `<tr>
           <td>${dateStr}</td>
           <td style="color:var(--c-orange2);">@${r.profile || '?'}</td>
           <td title="${desc.replace(/"/g, '&quot;')}">${shortDesc}</td>
           <td style="text-align:right;">${Number(r.diggCount || 0).toLocaleString()}</td>
-          <td style="text-align:right;">${Number(r.playCount || 0).toLocaleString()}</td>
+          <td style="text-align:right;">${plays.toLocaleString()}</td>
           <td style="text-align:right;">${Number(r.commentCount || 0).toLocaleString()}</td>
+          <td style="text-align:right;">${Number(r.collectCount || 0).toLocaleString()}</td>
           <td style="text-align:right;">${Number(r.shareCount || 0).toLocaleString()}</td>
           <td style="text-align:right;">${Number(r.repostCount || 0).toLocaleString()}</td>
+          <td style="text-align:right; color:var(--c-purple2); font-weight:600;">${er}%</td>
           <td style="text-align:center;">${typeBadge}</td>
           <td style="text-align:center;">${linkStr}</td>
         </tr>`;
@@ -2968,7 +3078,73 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
 
       tbody.innerHTML = rows;
     }
-    if (!text) return;
+
+    /* ══════════════════════════════════
+       EXPORT TOOLS
+    ══════════════════════════════════ */
+    function downloadTableCSV(event) {
+      if (event) event.stopPropagation(); // Don't collapse the details
+      const table = document.getElementById('dataTable');
+      const profile = document.getElementById('profileFilter').value;
+      const rows = Array.from(table.rows);
+      
+      let csv = [];
+      for (let i = 0; i < rows.length; i++) {
+        const row = [], cols = rows[i].cells;
+        for (let j = 0; j < cols.length; j++) {
+            // Last column is a link, skip or grab href
+            let data = cols[j].innerText.replace(/,/g, ''); // Simple cleanup
+            if (j === cols.length - 1) {
+              const link = cols[j].querySelector('a');
+              data = link ? link.href : '-';
+            }
+            row.push('"' + data.replace(/"/g, '""') + '"');
+        }
+        csv.push(row.join(','));
+      }
+      
+      const csvString = csv.join('\n');
+      const blob = new Blob([csvString], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const timestamp = new Date().toISOString().split('T')[0];
+      a.href = url;
+      a.download = `clabstream_${profile}_${timestamp}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSV downloaded successfully!', 'success');
+    }
+
+    function downloadChartImage(chartId) {
+      const canvas = document.getElementById(chartId);
+      if (!canvas) return;
+      
+      // Create a temporary canvas with a solid background
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = canvas.height;
+      const tCtx = tempCanvas.getContext('2d');
+      
+      // Fill background
+      tCtx.fillStyle = '#0c0c1a'; // Match dashboard background
+      tCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      
+      // Draw the chart on top
+      tCtx.drawImage(canvas, 0, 0);
+      
+      const url = tempCanvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      const timestamp = new Date().toISOString().split('T')[0];
+      a.href = url;
+      a.download = `clabstream_chart_${chartId}_${timestamp}.png`;
+      a.click();
+      showToast('Chart exported as PNG!', 'success');
+    }
+
+    async function sendChat() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
 
     input.value = '';
     input.style.height = 'auto';
