@@ -52,7 +52,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.APIFY_TOKEN}`
       },
-      body: JSON.stringify({ input })
+      body: JSON.stringify(input)
     });
 
     if (!runResponse.ok) {
