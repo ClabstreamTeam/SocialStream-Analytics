@@ -38,6 +38,7 @@ export default async function handler(req, res) {
     res.status(200).json({
       runId: statusData.data.id,
       status: statusData.data.status,
+      statusMessage: statusData.data.statusMessage,
       progress: statusData.data.progress,
       startedAt: statusData.data.startedAt,
       finishedAt: statusData.data.finishedAt,
