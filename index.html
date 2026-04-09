@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SocialStream — TikTok Analytics Workspace</title>
+  <title>SocialStream — TikTok Analytics for Teams</title>
+  <meta name="description" content="SocialStream helps teams monitor TikTok performance, benchmark accounts, and export executive-ready reports." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,136 +13,164 @@
   <link rel="stylesheet" href="assets/css/site.css">
 </head>
 <body class="site-body">
-
   <header class="site-top">
-    <a href="/" class="site-logo-fallback">
-      <img src="assets/branding/socialstream-logo.png" alt="" class="site-logo" onerror="this.style.display='none'">
+    <a href="index.html" class="brand">
+      <img src="assets/branding/socialstream-logo.png" alt="SocialStream" class="site-logo" onerror="this.style.display='none'">
       <span>SocialStream</span>
     </a>
-    <nav>
+    <nav class="site-nav">
+      <a href="#how">How it works</a>
       <a href="#features">Features</a>
-      <a href="#who">Who it's for</a>
-      <a href="#security">Security</a>
-      <a href="dashboard.html" class="cta">Open Workspace</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
     </nav>
+    <div class="site-cta-group">
+      <a href="dashboard.html" class="btn btn-secondary">Open workspace</a>
+      <a href="dashboard.html?demo=1" class="btn btn-primary">Start demo</a>
+    </div>
   </header>
 
   <main class="site-main">
-
-    <!-- ── Hero ── -->
-    <section class="hero">
-      <div class="hero-inner">
-        <p class="eyebrow"><i class="fa-solid fa-bolt"></i> Enterprise TikTok Analytics</p>
-        <h1>Your social analytics<br><span class="grad">command center.</span></h1>
-        <p>SocialStream scrapes TikTok profile data, surfaces performance trends, and converts raw engagement into executive-grade reporting — automatically.</p>
+    <section class="hero section-shell">
+      <div class="hero-copy">
+        <p class="eyebrow">TikTok analytics for brands, agencies, and growth teams</p>
+        <h1>A credible analytics workspace for social reporting and decision-making.</h1>
+        <p class="hero-sub">Scrape profile data, monitor content performance, compare accounts, and export executive-ready reports without stitching tools together.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="dashboard.html"><i class="fa-solid fa-arrow-right"></i> Launch Dashboard</a>
-          <a class="btn btn-secondary" href="#features">View Features</a>
+          <a class="btn btn-primary" href="dashboard.html"><i class="fa-solid fa-grid-2"></i> Open workspace</a>
+          <a class="btn btn-secondary" href="dashboard.html?demo=1"><i class="fa-solid fa-play"></i> Start demo</a>
+          <a class="btn btn-ghost" href="mailto:sales@socialstream.app"><i class="fa-solid fa-calendar-check"></i> Book walkthrough</a>
+        </div>
+        <div class="hero-trust">
+          <span><i class="fa-solid fa-shield-halved"></i> Server-side API security</span>
+          <span><i class="fa-solid fa-file-pdf"></i> Executive PDF exports</span>
+          <span><i class="fa-solid fa-users-viewfinder"></i> Multi-profile benchmarking</span>
         </div>
       </div>
-
-      <!-- Product mockup -->
-      <div class="hero-mockup">
-        <div class="mockup-window">
-          <div class="mockup-titlebar">
-            <div class="mockup-dot"></div>
-            <div class="mockup-dot"></div>
-            <div class="mockup-dot"></div>
-            <div class="mockup-url">
-              <i class="fa-solid fa-lock" style="font-size:10px;"></i>
-              socialstream-analytics.vercel.app/dashboard
-            </div>
-          </div>
-          <div class="mockup-body">
-            <div class="mockup-rail">
-              <div class="mockup-brand"></div>
-              <div class="mockup-navdot lit"></div>
-              <div class="mockup-navdot"></div>
-              <div class="mockup-navdot"></div>
-              <div class="mockup-navdot"></div>
-            </div>
-            <div class="mockup-content">
-              <div class="mockup-kpi"><div class="mockup-kpi-lbl"></div><div class="mockup-kpi-val"></div></div>
-              <div class="mockup-kpi"><div class="mockup-kpi-lbl"></div><div class="mockup-kpi-val"></div></div>
-              <div class="mockup-kpi"><div class="mockup-kpi-lbl"></div><div class="mockup-kpi-val"></div></div>
-              <div class="mockup-kpi"><div class="mockup-kpi-lbl"></div><div class="mockup-kpi-val"></div></div>
-              <div class="mockup-chart">
-                <div class="mockup-bar"></div>
-                <div class="mockup-bar"></div>
-                <div class="mockup-bar"></div>
-                <div class="mockup-bar"></div>
-                <div class="mockup-bar"></div>
-                <div class="mockup-bar"></div>
-                <div class="mockup-bar"></div>
-                <div class="mockup-bar"></div>
-                <div class="mockup-bar"></div>
-                <div class="mockup-bar"></div>
-                <div class="mockup-bar"></div>
-                <div class="mockup-bar"></div>
-              </div>
-            </div>
+      <div class="hero-preview">
+        <div class="preview-head">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="preview-url">/dashboard.html</span>
+        </div>
+        <div class="preview-body">
+          <div class="preview-sidebar"></div>
+          <div class="preview-main">
+            <div class="preview-row preview-row--kpis"></div>
+            <div class="preview-row preview-row--summary"></div>
+            <div class="preview-row preview-row--chart"></div>
+            <div class="preview-row preview-row--chart"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ── Features ── -->
-    <section id="features" class="features-section">
-      <div class="section-outer">
-        <div class="section-intro">
-          <div class="section-tag">Features</div>
-          <h2>Everything you need. Nothing you don't.</h2>
-          <p>A complete TikTok analytics workflow from data collection to stakeholder reporting, in a single workspace.</p>
-        </div>
-        <div class="panel-grid">
-          <article class="panel">
-            <div class="panel-icon" style="background:#eef4ff;color:#2667ff;"><i class="fa-solid fa-chart-column"></i></div>
-            <h3>Unified analytics workspace</h3>
-            <p>Setup, scraping, KPIs, charts, highlights, and post-level reporting — all in one coherent workspace with no context-switching required.</p>
-          </article>
-          <article class="panel">
-            <div class="panel-icon" style="background:#e9f9f0;color:#17b26a;"><i class="fa-solid fa-newspaper"></i></div>
-            <h3>Executive-ready summaries</h3>
-            <p>Auto-generated narrative summaries and strategic recommendation blocks written for weekly stakeholder reviews — no manual analysis needed.</p>
-          </article>
-          <article class="panel">
-            <div class="panel-icon" style="background:#fff8eb;color:#b45309;"><i class="fa-solid fa-file-pdf"></i></div>
-            <h3>Report export workflow</h3>
-            <p>A dedicated report page for PDF output focused only on analysis. No marketing copy, no clutter — just clean, printable intelligence.</p>
-          </article>
-        </div>
+    <section id="how" class="section-shell section-block">
+      <div class="section-head">
+        <p class="section-kicker">How it works</p>
+        <h2>From data collection to executive report in minutes</h2>
+      </div>
+      <div class="how-grid">
+        <article class="step-card"><span>1</span><h3>Configure accounts</h3><p>Add TikTok handles, set timeframe, and choose crawl depth.</p></article>
+        <article class="step-card"><span>2</span><h3>Run data collection</h3><p>SocialStream triggers scraping and automatically normalizes results.</p></article>
+        <article class="step-card"><span>3</span><h3>Review insights</h3><p>Use KPI cards, trend charts, and editorial highlights/lowlights.</p></article>
+        <article class="step-card"><span>4</span><h3>Export report</h3><p>Generate a clean report page optimized for A4 PDF sharing.</p></article>
       </div>
     </section>
 
-    <!-- ── Who it's for ── -->
-    <section id="who" class="who-section">
-      <div class="section-outer">
-        <div class="split">
-          <div>
-            <h2>Built for creators, brands, and agencies.</h2>
-            <p>Compare profiles, detect winning content patterns, and build repeatable growth strategies backed by reliable scraped data — not platform estimates.</p>
-          </div>
-          <ul>
-            <li>Campaign optimization</li>
-            <li>Cross-profile benchmarking</li>
-            <li>Trend and cadence analysis</li>
-            <li>Client-ready reporting</li>
-          </ul>
+    <section id="features" class="section-shell section-block">
+      <div class="section-head">
+        <p class="section-kicker">Features</p>
+        <h2>Built for day-to-day analytics operations</h2>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card"><i class="fa-solid fa-chart-line"></i><h3>Performance monitoring</h3><p>Track likes, plays, comments, saves, shares, reposts, and engagement behavior over time.</p></article>
+        <article class="feature-card"><i class="fa-solid fa-layer-group"></i><h3>Editorial diagnostics</h3><p>Compare highlights and lowlights with thumbnail previews and narrative reasoning.</p></article>
+        <article class="feature-card"><i class="fa-solid fa-table"></i><h3>BI-style data table</h3><p>Inspect post-level details and export CSV for deeper analysis workflows.</p></article>
+        <article class="feature-card"><i class="fa-solid fa-filter"></i><h3>Profile filtering</h3><p>Switch between overview and profile-specific views without rerunning collection.</p></article>
+        <article class="feature-card"><i class="fa-solid fa-file-export"></i><h3>Executive exports</h3><p>Package KPI summaries, selected charts, and editorial cards into a report-only PDF flow.</p></article>
+        <article class="feature-card"><i class="fa-solid fa-shield"></i><h3>Secure architecture</h3><p>Secrets stay server-side in environment variables and API functions.</p></article>
+      </div>
+    </section>
+
+    <section class="section-shell section-block audience-block">
+      <div class="section-head">
+        <p class="section-kicker">Who it’s for</p>
+        <h2>Teams that need reliable social reporting</h2>
+      </div>
+      <div class="audience-grid">
+        <article><h3>Brand teams</h3><p>Understand campaign consistency and identify repeatable content patterns.</p></article>
+        <article><h3>Agencies</h3><p>Benchmark multiple client profiles and ship stakeholder-ready reporting faster.</p></article>
+        <article><h3>Creator managers</h3><p>Spot high-performing themes and optimize publishing cadence with evidence.</p></article>
+      </div>
+    </section>
+
+    <section id="pricing" class="section-shell section-block pricing-block" data-pricing="monthly">
+      <div class="section-head">
+        <p class="section-kicker">Pricing</p>
+        <h2>Choose the plan that matches your reporting cadence</h2>
+        <div class="billing-toggle" role="group" aria-label="Billing period">
+          <button type="button" class="billing-btn active" data-billing="monthly">Monthly</button>
+          <button type="button" class="billing-btn" data-billing="annual">Annual <span>Save 20%</span></button>
         </div>
       </div>
-    </section>
-
-    <!-- ── Security ── -->
-    <section id="security" class="security-section">
-      <div class="security">
-        <div class="security-icon"><i class="fa-solid fa-shield-halved"></i></div>
-        <h2>Secure by design.</h2>
-        <p>API tokens are handled exclusively in Vercel serverless functions and environment variables — never exposed in client-side code.</p>
+      <div class="price-grid">
+        <article class="price-card"><h3>Demo</h3><p class="price" data-monthly="$0" data-annual="$0">$0</p><p class="price-sub">For testing product fit</p><ul><li>Sample dataset</li><li>Read-only workspace</li><li>Basic export preview</li></ul><a href="dashboard.html?demo=1" class="btn btn-secondary">Start demo</a></article>
+        <article class="price-card"><h3>Starter</h3><p class="price" data-monthly="$49" data-annual="$39">$49</p><p class="price-sub">per workspace / month</p><ul><li>Up to 5 tracked profiles</li><li>Weekly reports</li><li>CSV exports</li></ul><a href="mailto:sales@socialstream.app" class="btn btn-secondary">Contact sales</a></article>
+        <article class="price-card featured"><div class="badge">Most Popular</div><h3>Growth</h3><p class="price" data-monthly="$129" data-annual="$103">$129</p><p class="price-sub">per workspace / month</p><ul><li>Up to 25 tracked profiles</li><li>Daily report exports</li><li>Priority support</li></ul><a href="mailto:sales@socialstream.app" class="btn btn-primary">Choose Growth</a></article>
+        <article class="price-card"><h3>Agency</h3><p class="price" data-monthly="$299" data-annual="$239">$299</p><p class="price-sub">per workspace / month</p><ul><li>Up to 80 tracked profiles</li><li>Multi-client reporting</li><li>Advanced data windows</li></ul><a href="mailto:sales@socialstream.app" class="btn btn-secondary">Contact sales</a></article>
+        <article class="price-card"><h3>Enterprise</h3><p class="price" data-monthly="Custom" data-annual="Custom">Custom</p><p class="price-sub">Custom contracts</p><ul><li>Unlimited profiles</li><li>Dedicated support</li><li>Security review & SLA</li></ul><a href="mailto:sales@socialstream.app" class="btn btn-secondary">Book walkthrough</a></article>
+      </div>
+      <div class="compare-wrap">
+        <table class="compare-table">
+          <thead><tr><th>Capability</th><th>Demo</th><th>Starter</th><th>Growth</th><th>Agency</th><th>Enterprise</th></tr></thead>
+          <tbody>
+            <tr><td>Tracked profiles</td><td>Sample only</td><td>5</td><td>25</td><td>80</td><td>Unlimited</td></tr>
+            <tr><td>Executive PDF exports</td><td>Preview</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Cross-profile comparison</td><td>—</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Support</td><td>Community</td><td>Email</td><td>Priority</td><td>Priority+</td><td>Dedicated</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
+    <section id="faq" class="section-shell section-block">
+      <div class="section-head">
+        <p class="section-kicker">FAQ</p>
+        <h2>Questions buyers typically ask</h2>
+      </div>
+      <div class="faq-list">
+        <details><summary>Does SocialStream expose API tokens to the browser?</summary><p>No. Tokens are kept server-side in deployment environment variables and called through API endpoints.</p></details>
+        <details><summary>Can I export reports without marketing page content?</summary><p>Yes. Reports are generated via a dedicated report page that contains report content only.</p></details>
+        <details><summary>Can my team compare multiple TikTok profiles?</summary><p>Yes. The workspace supports profile-level filtering and comparison within the same analysis context.</p></details>
+        <details><summary>Can we start with a demo before committing?</summary><p>Yes. Use Start Demo to load example data and preview the full workflow immediately.</p></details>
+      </div>
+    </section>
+
+    <section class="section-shell final-cta">
+      <h2>Ready to operationalize TikTok analytics?</h2>
+      <p>Move from ad-hoc screenshots to a structured analytics workflow your stakeholders can trust.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="dashboard.html">Open workspace</a>
+        <a class="btn btn-secondary" href="dashboard.html?demo=1">Start demo</a>
+        <a class="btn btn-ghost" href="mailto:sales@socialstream.app">Contact sales</a>
+      </div>
+    </section>
   </main>
 
-  <footer class="site-footer-lite">© 2026 SocialStream. All rights reserved.</footer>
+  <footer class="site-footer">
+    <div>
+      <strong>SocialStream</strong>
+      <p>Analytics workspace and executive reporting for TikTok operations.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="dashboard.html">Workspace</a>
+    </div>
+  </footer>
+
+  <script src="assets/js/shared.js"></script>
+  <script src="assets/js/site.js"></script>
 </body>
 </html>

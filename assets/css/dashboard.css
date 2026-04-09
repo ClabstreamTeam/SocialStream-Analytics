@@ -48,11 +48,11 @@
 	width: 44px;
 	height: 44px;
 	border-radius: 14px;
-	background: linear-gradient(145deg, #1f4fff, #53b1fd);
+	background: #175cd3;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	box-shadow: 0 10px 24px rgba(38, 103, 255, 0.35);
+	box-shadow: 0 8px 18px rgba(23, 92, 211, 0.24);
 }
 
 .rail-brand img {
@@ -373,10 +373,7 @@
 	font-weight: 800;
 	line-height: 1;
 	letter-spacing: -0.04em;
-	background: linear-gradient(135deg, #0f172a 0%, #2667ff 100%);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	background-clip: text;
+	color: #0f172a;
 }
 
 .metric-tile small {
@@ -897,12 +894,8 @@ input[type='date']:focus {
 	display: block;
 	font-size: 26px;
 	font-weight: 800;
-	color: var(--shell-text);
+	color: #0f172a;
 	letter-spacing: -0.04em;
-	background: linear-gradient(135deg, #0f172a 0%, #2667ff 100%);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	background-clip: text;
 }
 
 .stat-mini small {
@@ -998,11 +991,7 @@ input[type='date']:focus {
 	font-size: 28px;
 	font-weight: 800;
 	letter-spacing: -0.04em;
-	color: var(--shell-text);
-	background: linear-gradient(135deg, #0f172a 0%, #2667ff 100%);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	background-clip: text;
+	color: #101828;
 }
 
 .kpi-footnote {
