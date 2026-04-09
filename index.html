@@ -2188,34 +2188,38 @@
 
   <script>
     /* ══════════════════════════════════
-       CONFIG (backend token — hidden from user)
+       CONFIG (backend API routing)
     ══════════════════════════════════ */
-    const APIFY_TOKEN = ['apify_api_', 'IwI1HxZ', '4bSkSoDCEo', 'cMIPAUewRySm', '30CgoK5'].join('');
     const ACTOR_ID = 'clockworks~tiktok-scraper'; // ~ is valid in URLs per RFC3986
-    const APIFY_BASE = 'https://api.apify.com/v2';
     const POLL_MS = 5000;
 
-    /* Shared fetch wrapper — always attaches token as both query param AND
-       Authorization header, sets CORS mode, and surfaces readable errors. */
-    async function apifyFetch(path, options = {}) {
-      const url = `${APIFY_BASE}${path}${path.includes('?') ? '&' : '?'}token=${APIFY_TOKEN}`;
-      const res = await fetch(url, {
-        mode: 'cors',
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${APIFY_TOKEN}`,
-          ...(options.headers || {}),
-        },
+    async function startApifyRun(payload) {
+      const res = await fetch('/api/apify/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
-
       if (!res.ok) {
-        let msg = `HTTP ${res.status}`;
-        try {
-          const body = await res.json();
-          msg = body?.error?.message || body?.message || msg;
-        } catch (_) { }
-        throw new Error(`Apify API error: ${msg}`);
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.error?.message || body?.details || `HTTP ${res.status}`);
+      }
+      return res.json();
+    }
+
+    async function getApifyStatus(runId) {
+      const res = await fetch(`/api/apify/status?runId=${encodeURIComponent(runId)}`);
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.error?.message || body?.details || `HTTP ${res.status}`);
+      }
+      return res.json();
+    }
+
+    async function fetchDatasetItems(datasetId) {
+      const res = await fetch(`/api/apify/dataset?datasetId=${encodeURIComponent(datasetId)}`);
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.error?.message || body?.details || `HTTP ${res.status}`);
       }
       return res.json();
     }
@@ -2379,12 +2383,9 @@
         const payload = buildInput(usernames, effectiveMax, dateFilter);
         console.log('[Clabstream] Starting actor with payload:', JSON.stringify(payload, null, 2));
 
-        const runData = await apifyFetch(`/acts/${encodeURIComponent(ACTOR_ID)}/runs`, {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        });
+        const runData = await startApifyRun(payload);
 
-        const runId = runData.data?.id;
+        const runId = runData.runId || runData.data?.id;
         if (!runId) throw new Error('No run ID returned from Apify. Actor may be misconfigured.');
         console.log('[Clabstream] Run ID:', runId);
 
@@ -2500,8 +2501,8 @@
         async function check() {
           if (Date.now() - start > 12 * 60 * 1000) { reject(new Error('Scrape timed out after 12 minutes.')); return; }
           try {
-            const d = await apifyFetch(`/actor-runs/${runId}`);
-            const status = d.data?.status;
+            const d = await getApifyStatus(runId);
+            const status = d.status || d.data?.status;
             dots = (dots + 1) % 4;
             const elapsed = Math.round((Date.now() - start) / 1000);
             document.getElementById('progressMsg').textContent = `Scraping TikTok${'.'.repeat(dots + 1)} (${elapsed}s elapsed)`;
@@ -2521,11 +2522,11 @@
        FETCH DATASET
     ══════════════════════════════════ */
     async function getDatasetId(runId) {
-      const d = await apifyFetch(`/actor-runs/${runId}`);
-      return d.data?.defaultDatasetId;
+      const d = await getApifyStatus(runId);
+      return d.defaultDatasetId || d.data?.defaultDatasetId;
     }
     async function fetchDataset(datasetId) {
-      const d = await apifyFetch(`/datasets/${datasetId}/items?format=json&clean=true&limit=50000`);
+      const d = await fetchDatasetItems(datasetId);
       // Apify can return an array directly or wrap it in { data: { items: [] } }
       if (Array.isArray(d)) return d;
       if (Array.isArray(d?.items)) return d.items;
@@ -3158,7 +3159,6 @@
     /* ══════════════════════════════════
        OPENROUTER AI CHAT ASSISTANT
     ══════════════════════════════════ */
-    const OPENROUTER_KEY = ['sk-or-v1-', '17b6943d7', 'a9f00fe', 'e28e12e', '37cb23fd', '7152aed', '288e896', 'f3988', '3d3b42', '31032448'].join('');
     const OR_MODELS = [
       'openrouter/auto',
       'anthropic/claude-haiku-4.5',
@@ -3195,7 +3195,7 @@
       'x-ai/grok-4.1-fast',
       'z-ai/glm-5'
     ];
-    const OR_BASE = 'https://openrouter.ai/api/v1/chat/completions';
+    const OR_BASE = '/api/chat';
 
     let chatHistory = [];
     let chatOpen = false;
@@ -3435,10 +3435,7 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
         const res = await fetch(OR_BASE, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${OPENROUTER_KEY}`,
-            'HTTP-Referer': window.location.href,
-            'X-Title': 'Clabstream AI'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             model: model,
