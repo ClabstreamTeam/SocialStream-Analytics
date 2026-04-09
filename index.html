@@ -1254,6 +1254,269 @@
       border-color: rgba(249, 115, 22, 0.3);
       color: var(--c-orange2);
     }
+
+    /* DESIGN SYSTEM */
+    :root {
+      --space-xxs: 8px;
+      --space-xs: 12px;
+      --space-sm: 16px;
+      --space-md: 24px;
+      --space-lg: 32px;
+      --space-xl: 44px;
+      --radius-sm: 12px;
+      --radius: 18px;
+      --radius-lg: 24px;
+      --shadow-soft: 0 20px 60px rgba(0, 0, 0, 0.18);
+      --surface-elevated: rgba(255, 255, 255, 0.04);
+    }
+
+    .section {
+      padding: var(--space-md);
+      background: rgba(11, 10, 23, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(14px);
+    }
+
+    .panel {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    .panel-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-sm);
+    }
+
+    .panel-title {
+      font-family: 'Oxanium', sans-serif;
+      font-size: clamp(1.35rem, 2vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: white;
+      margin-bottom: 6px;
+    }
+
+    .panel-subtitle {
+      color: var(--c-muted);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      max-width: 56rem;
+    }
+
+    .section-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .field-group {
+      display: grid;
+      gap: var(--space-md);
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .field-row > div {
+      min-width: 0;
+    }
+
+    .charts-grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .charts-grid.columns-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .charts-grid.columns-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .charts-grid.wide {
+      grid-template-columns: 1fr;
+    }
+
+    .chart-card,
+    .panel-card,
+    .kpi-card,
+    .highlight-card {
+      border-radius: var(--radius);
+      background: var(--c-card2);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .chart-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      min-height: 100%;
+      padding: var(--space-lg);
+    }
+
+    .chart-card__header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+
+    .chart-card__header .chart-title,
+    .chart-card__header .chart-section-label {
+      margin-bottom: 0;
+    }
+
+    .chart-card__body {
+      position: relative;
+      min-height: 250px;
+      display: flex;
+      align-items: center;
+    }
+
+    .chart-card__body canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .kpi-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      padding: 22px;
+      min-height: 132px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .kpi-card .kpi-val {
+      font-size: 2.2rem;
+    }
+
+    .kpi-card .kpi-label {
+      margin-bottom: 8px;
+    }
+
+    .kpi-card .kpi-icon {
+      min-width: 42px;
+      min-height: 42px;
+      border-radius: 14px;
+      font-size: 14px;
+    }
+
+    .kpi-card.accent {
+      border-color: rgba(251, 191, 36, 0.25);
+      background: linear-gradient(180deg, rgba(251, 191, 36, 0.08), rgba(255,255,255,0.02));
+    }
+
+    .kpi-card .kpi-flag {
+      color: var(--c-amber);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: auto;
+    }
+
+    .info-panel {
+      background: rgba(11, 10, 23, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: var(--space-md);
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(12, 12, 24, 0.95);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      min-width: 950px;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--c-text);
+    }
+
+    .data-table th {
+      color: var(--c-muted);
+      font-weight: 600;
+      text-align: left;
+      letter-spacing: 0.01em;
+    }
+
+    .data-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .summary-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    @media (max-width: 1200px) {
+      .kpi-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 960px) {
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .charts-grid.columns-2,
+      .charts-grid.columns-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .site-header,
+      .panel-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .section-actions {
+        justify-content: flex-start;
+      }
+    }
   </style>
 </head>
 
@@ -1271,7 +1534,7 @@
           <div class="logo-sub" id="headerSub">TikTok Profile Intelligence · Automated Analytics</div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;" class="print-hidden">
+      <div class="section-actions print-hidden">
         <span id="statusBadge" class="badge badge-running" style="display:none;">
           <span class="pulse-orange"></span><span id="statusText">Running…</span>
         </span>
@@ -1285,17 +1548,14 @@
     </header>
 
     <!-- ══ SETUP PANEL ══ -->
-    <div id="setupPanel" class="setup-panel fade-in">
+    <div id="setupPanel" class="setup-panel fade-in panel">
       <div class="setup-inner">
         <!-- Title -->
-        <div style="margin-bottom:34px;">
-          <div class="font-display"
-            style="font-family:'Oxanium',sans-serif;font-size:28px;font-weight:800;margin-bottom:10px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">
-            Configure Your Analysis
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Configure Your Analysis</div>
+            <p class="panel-subtitle">Enter TikTok usernames to track, select your timeframe, and set the result limit. Clabstream will automatically scrape, process, and render your analytics dashboard.</p>
           </div>
-          <p style="color:var(--c-muted);font-size:14px;max-width:560px;line-height:1.65;">Enter TikTok usernames to
-            track, select your timeframe, and set the result limit. Clabstream will automatically scrape, process, and
-            render your analytics dashboard.</p>
         </div>
 
         <!-- Username input -->
@@ -1321,7 +1581,7 @@
         </div>
 
         <!-- Timeframe + Max Results -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:32px;">
+        <div class="field-row">
 
           <!-- Timeframe -->
           <div>
@@ -1336,7 +1596,7 @@
               <button class="tf-pill" data-days="0" onclick="selectPreset(0)">All time</button>
               <button class="tf-pill" data-days="-1" onclick="selectCustom()">Custom…</button>
             </div>
-            <div id="customDatesWrap" style="display:none;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+           <div id="customDatesWrap" class="field-row" style="display:none;">
               <div>
                 <label class="field-label" style="margin-bottom:5px;">From</label>
                 <input type="date" id="dateFrom" class="input-styled" style="padding:10px 12px;">
@@ -1352,7 +1612,7 @@
           <div>
             <label class="field-label"><i class="fa-solid fa-database"
                 style="margin-right:6px;color:var(--c-orange);"></i> Max Results Per Username</label>
-            <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
+            <div class="section-actions" style="margin-bottom:12px;">
               <input type="range" id="maxResultsRange" min="10" max="500" value="50"
                 oninput="document.getElementById('maxResultsVal').textContent=this.value">
               <span id="maxResultsVal"
@@ -1373,7 +1633,7 @@
         </div>
 
         <!-- Actions -->
-        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div class="section-actions">
           <button onclick="startScrape()" id="runBtn" class="btn btn-run">
             <i class="fa-solid fa-bolt"></i> Run Analysis
           </button>
@@ -1389,7 +1649,7 @@
     <!-- ══ PROGRESS PANEL ══ -->
     <div id="progressPanel" style="display:none;" class="card fade-in">
       <div
-        style="padding:56px 36px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:28px;">
+        class="panel section section-status">
         <div style="position:relative;width:80px;height:80px;">
           <div style="position:absolute;inset:0;border-radius:50%;border:3px solid rgba(249,115,22,0.15);"></div>
           <div
@@ -1431,7 +1691,7 @@
           <div class="font-display" style="font-family:'Oxanium',sans-serif;font-size:16px;font-weight:600;"
             id="activeViewLabel">All Profiles — Overview</div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;" class="print-hidden">
+        <div class="section-actions print-hidden">
           <select id="profileFilter" class="select-styled" style="min-width:220px;" onchange="updateDashboard()">
             <option value="all">All Profiles (Overview)</option>
           </select>
@@ -1556,8 +1816,8 @@
       </div>
 
       <!-- Profile Comparison (multi-user) -->
-      <div id="profileComparisonContainer" class="card fade-in" style="padding:24px;display:none;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div id="profileComparisonContainer" class="chart-card fade-in" style="display:none;">
+        <div class="chart-card__header">
           <div>
             <div class="chart-section-label">Overview</div>
             <div class="chart-title">Profile Comparison — Total Likes</div>
@@ -1566,11 +1826,11 @@
             <i class="fa-solid fa-download"></i> PNG
           </button>
         </div>
-        <div style="position:relative;height:240px;"><canvas id="profileComparisonChart"></canvas></div>
+        <div class="chart-card__body"><canvas id="profileComparisonChart"></canvas></div>
       </div>
 
       <!-- KPIs -->
-      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:14px;" class="fade-in kpi-row">
+      <div class="fade-in kpi-grid">
         <div class="kpi card">
           <div style="display:flex;align-items:center;justify-content:space-between;">
             <div class="kpi-label">Total Videos</div>
@@ -1647,8 +1907,8 @@
 
       <!-- Charts Row 1 -->
       <div class="grid-2 fade-in">
-        <div class="card" style="padding:24px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div class="chart-card fade-in">
+          <div class="chart-card__header">
             <div>
               <div class="chart-section-label">Top Posts</div>
               <div class="chart-title">Best Performing Videos by Likes</div>
@@ -1657,12 +1917,12 @@
               <i class="fa-solid fa-download"></i> PNG
             </button>
           </div>
-          <div style="position:relative;height:250px;"><canvas id="topPostsChart"></canvas></div>
+          <div class="chart-card__body"><canvas id="topPostsChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-topPosts">Waiting for data.</span>
           </div>
         </div>
-        <div class="card" style="padding:24px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div class="chart-card fade-in">
+          <div class="chart-card__header">
             <div>
               <div class="chart-section-label">Efficiency Trend</div>
               <div class="chart-title">Avg Engagement Per Post (Timeline)</div>
@@ -1671,7 +1931,7 @@
               <i class="fa-solid fa-download"></i> PNG
             </button>
           </div>
-          <div style="position:relative;height:250px;"><canvas id="engPerPostChart"></canvas></div>
+          <div class="chart-card__body"><canvas id="engPerPostChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-engPerPost">Waiting for data.</span>
           </div>
         </div>
@@ -1679,8 +1939,8 @@
 
       <!-- Charts Row 2 -->
       <div class="grid-1-2 fade-in">
-        <div class="card" style="padding:24px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div class="chart-card fade-in">
+          <div class="chart-card__header">
             <div>
               <div class="chart-section-label">Interaction Mix</div>
               <div class="chart-title">Engagement Split</div>
@@ -1689,11 +1949,11 @@
               <i class="fa-solid fa-download"></i> PNG
             </button>
           </div>
-          <div style="position:relative;height:230px;"><canvas id="engagementPieChart"></canvas></div>
+          <div class="chart-card__body"><canvas id="engagementPieChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-pie">Waiting for data.</span></div>
         </div>
-        <div class="card" style="padding:24px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div class="chart-card fade-in">
+          <div class="chart-card__header">
             <div>
               <div class="chart-section-label">Weekly Pattern</div>
               <div class="chart-title">Engagement by Day of Week</div>
@@ -1702,15 +1962,15 @@
               <i class="fa-solid fa-download"></i> PNG
             </button>
           </div>
-          <div style="position:relative;height:230px;"><canvas id="dayOfWeekChart"></canvas></div>
+          <div class="chart-card__body"><canvas id="dayOfWeekChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-day">Waiting for data.</span></div>
         </div>
       </div>
 
       <!-- Charts Row 3 -->
       <div class="grid-2 fade-in">
-        <div class="card" style="padding:24px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div class="chart-card fade-in">
+          <div class="chart-card__header">
             <div>
               <div class="chart-section-label">Content Strategy</div>
               <div class="chart-title">Top Hashtags Used</div>
@@ -1719,12 +1979,12 @@
               <i class="fa-solid fa-download"></i> PNG
             </button>
           </div>
-          <div style="position:relative;height:250px;"><canvas id="hashtagChart"></canvas></div>
+          <div class="chart-card__body"><canvas id="hashtagChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-hashtag">Waiting for data.</span>
           </div>
         </div>
-        <div class="card" style="padding:24px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div class="chart-card fade-in">
+          <div class="chart-card__header">
             <div>
               <div class="chart-section-label">Hourly Heatmap</div>
               <div class="chart-title">Posts by Hour of Day</div>
@@ -1733,14 +1993,14 @@
               <i class="fa-solid fa-download"></i> PNG
             </button>
           </div>
-          <div style="position:relative;height:250px;"><canvas id="hourChart"></canvas></div>
+          <div class="chart-card__body"><canvas id="hourChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-hour">Waiting for data.</span></div>
         </div>
       </div>
 
       <!-- Timeline (full width) -->
-      <div class="card fade-in" style="padding:24px;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div class="chart-card fade-in">
+        <div class="chart-card__header">
           <div>
             <div class="chart-section-label">Campaign Performance</div>
             <div class="chart-title">Likes Over Time</div>
@@ -1749,13 +2009,13 @@
             <i class="fa-solid fa-download"></i> PNG
           </button>
         </div>
-        <div style="position:relative;height:290px;"><canvas id="timelineChart"></canvas></div>
+        <div class="chart-card__body"><canvas id="timelineChart"></canvas></div>
         <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-timeline">Waiting for data.</span></div>
       </div>
 
       <!-- Play Rate Chart -->
-      <div class="card fade-in" style="padding:24px;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div class="chart-card fade-in">
+        <div class="chart-card__header">
           <div>
             <div class="chart-section-label">Reach Performance</div>
             <div class="chart-title">Play Count Distribution Over Time</div>
@@ -1764,14 +2024,14 @@
             <i class="fa-solid fa-download"></i> PNG
           </button>
         </div>
-        <div style="position:relative;height:250px;"><canvas id="playsTimelineChart"></canvas></div>
+        <div class="chart-card__body"><canvas id="playsTimelineChart"></canvas></div>
         <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-plays">Waiting for data.</span></div>
       </div>
 
       <!-- Shares & Reposts Charts -->
       <div class="grid-2 fade-in">
-        <div class="card" style="padding:24px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div class="chart-card fade-in">
+          <div class="chart-card__header">
             <div>
               <div class="chart-section-label">Distribution Activity</div>
               <div class="chart-title">Shares Over Time</div>
@@ -1780,11 +2040,11 @@
               <i class="fa-solid fa-download"></i> PNG
             </button>
           </div>
-          <div style="position:relative;height:250px;"><canvas id="sharesTimelineChart"></canvas></div>
+          <div class="chart-card__body"><canvas id="sharesTimelineChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-shares">Waiting for data.</span></div>
         </div>
-        <div class="card" style="padding:24px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div class="chart-card fade-in">
+          <div class="chart-card__header">
             <div>
               <div class="chart-section-label">Virality Signal</div>
               <div class="chart-title">Reposts Over Time</div>
@@ -1793,7 +2053,7 @@
               <i class="fa-solid fa-download"></i> PNG
             </button>
           </div>
-          <div style="position:relative;height:250px;"><canvas id="repostsTimelineChart"></canvas></div>
+          <div class="chart-card__body"><canvas id="repostsTimelineChart"></canvas></div>
           <div class="insight"><i class="fa-solid fa-lightbulb"></i><span id="exp-reposts">Waiting for data.</span>
           </div>
         </div>
