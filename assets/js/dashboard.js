@@ -348,6 +348,7 @@
         showToast(friendlyMsg, 'error');
         document.getElementById('runBtn').disabled = false;
         setTimeout(() => {
+          document.body.classList.add('is-pristine');
           document.getElementById('progressPanel').style.display = 'none';
           document.getElementById('setupPanel').style.display = 'block';
         }, 3500);
@@ -510,6 +511,7 @@
        DASHBOARD ENGINE
     ══════════════════════════════════ */
     function loadDashboard(data) {
+      document.body.classList.remove('is-pristine');
       globalData = data;
       populateFilter(data);
       const uniqueProfiles = [...new Set(data.map(r => r.profile).filter(Boolean))];
@@ -1201,6 +1203,7 @@
     ══════════════════════════════════ */
     function resetToSetup() {
       clearTimeout(pollTimer);
+      document.body.classList.add('is-pristine');
       document.getElementById('dashboardPanel').style.display = 'none';
       document.getElementById('progressPanel').style.display = 'none';
       document.getElementById('setupPanel').style.display = 'block';
@@ -1221,6 +1224,7 @@
        DEMO DATA
     ══════════════════════════════════ */
     function loadDemoData() {
+      document.body.classList.remove('is-pristine');
       showToast('Loading demo dataset…', '');
       const profiles = ['brandacccount', 'creator_demo', 'viral_studio'];
       const demo = []; const now = Date.now();

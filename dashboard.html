@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="assets/css/shared.css">
   <link rel="stylesheet" href="assets/css/dashboard.css">
 </head>
-<body class="workspace-body">
+<body class="workspace-body is-pristine">
   <div class="command-shell">
     <aside class="rail-sidebar">
       <div class="rail-brand">
@@ -55,6 +55,35 @@
       </header>
 
       <main class="workspace-canvas">
+        <section id="onboardingHero" class="card-surface onboarding-hero fade-in">
+          <div class="onboarding-hero-copy">
+            <div class="section-kicker">First-run experience</div>
+            <h2>Welcome to your TikTok intelligence command center.</h2>
+            <p>SocialStream is designed to move your team from raw profile scraping to executive-grade reporting in one deliberate flow. Start with demo data or configure your own run below.</p>
+            <div class="onboarding-hero-actions print-hidden">
+              <button onclick="loadDemoData()" class="btn btn-run"><i class="fa-solid fa-flask"></i> Launch interactive demo</button>
+              <a href="#setupPanel" class="btn btn-ghost"><i class="fa-solid fa-sliders"></i> Configure real run</a>
+            </div>
+          </div>
+          <div class="onboarding-preview-grid">
+            <article class="onboard-preview-card">
+              <span>Executive Narrative</span>
+              <strong>Auto-generated strategic readout</strong>
+              <small>Built from cadence, reach, and engagement distributions.</small>
+            </article>
+            <article class="onboard-preview-card">
+              <span>Editorial Intelligence</span>
+              <strong>Highlights + lowlights</strong>
+              <small>Visual post cards with reasoned performance context.</small>
+            </article>
+            <article class="onboard-preview-card">
+              <span>Stakeholder Output</span>
+              <strong>Report-only A4 export</strong>
+              <small>Clean executive document with KPIs, charts, findings, and appendix.</small>
+            </article>
+          </div>
+        </section>
+
         <section class="workspace-masthead">
           <div class="card-surface masthead-brand">
             <div class="masthead-brand-logo">

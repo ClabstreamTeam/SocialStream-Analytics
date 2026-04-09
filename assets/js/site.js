@@ -5,6 +5,8 @@
   const tiltRoot = document.querySelector('[data-tilt-root]');
   const tiltPanel = document.querySelector('[data-tilt-panel]');
   const tiltFloats = Array.from(document.querySelectorAll('[data-tilt-float]'));
+  const showcase = document.querySelector('[data-showcase-parallax]');
+  const showcaseCards = Array.from(document.querySelectorAll('.film-panel'));
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (header) {
@@ -45,6 +47,23 @@
     };
     tiltRoot.addEventListener('mousemove', handleMove);
     tiltRoot.addEventListener('mouseleave', resetTilt);
+  }
+
+  if (showcase && showcaseCards.length && !prefersReduced) {
+    const onShowcaseMove = (ev) => {
+      const rect = showcase.getBoundingClientRect();
+      const x = ((ev.clientX - rect.left) / rect.width) - 0.5;
+      const y = ((ev.clientY - rect.top) / rect.height) - 0.5;
+      showcaseCards.forEach((card, idx) => {
+        const strength = (idx + 1) * 6;
+        card.style.transform = `translate3d(${(x * strength).toFixed(1)}px, ${(y * strength).toFixed(1)}px, 0)`;
+      });
+    };
+    const onShowcaseLeave = () => {
+      showcaseCards.forEach(card => { card.style.transform = 'translate3d(0,0,0)'; });
+    };
+    showcase.addEventListener('mousemove', onShowcaseMove);
+    showcase.addEventListener('mouseleave', onShowcaseLeave);
   }
 
   if (!root) return;

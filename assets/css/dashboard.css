@@ -225,6 +225,108 @@
 	padding: 24px;
 }
 
+.onboarding-hero {
+	padding: 28px;
+	margin-bottom: 18px;
+	display: grid;
+	grid-template-columns: 1.1fr .9fr;
+	gap: 18px;
+	overflow: hidden;
+	position: relative;
+}
+
+.onboarding-hero::before {
+	content: '';
+	position: absolute;
+	right: -120px;
+	top: -80px;
+	width: 320px;
+	height: 320px;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(38,103,255,0.14) 0%, transparent 72%);
+	pointer-events: none;
+}
+
+.onboarding-hero-copy h2 {
+	margin: 8px 0 10px;
+	font-size: clamp(28px, 4vw, 42px);
+	line-height: 1.06;
+	letter-spacing: -0.03em;
+}
+
+.onboarding-hero-copy p {
+	margin: 0;
+	max-width: 760px;
+	color: var(--shell-muted);
+	font-size: 14px;
+	line-height: 1.75;
+}
+
+.onboarding-hero-actions {
+	margin-top: 18px;
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.onboarding-preview-grid {
+	display: grid;
+	gap: 10px;
+	align-content: center;
+}
+
+.onboard-preview-card {
+	border: 1px solid var(--shell-border);
+	background: rgba(255,255,255,.88);
+	border-radius: 14px;
+	padding: 14px;
+	box-shadow: 0 8px 18px rgba(16,24,40,.06);
+}
+
+.onboard-preview-card span {
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	color: var(--shell-subtle);
+}
+
+.onboard-preview-card strong {
+	display: block;
+	margin-top: 6px;
+	font-size: 15px;
+	letter-spacing: -.01em;
+	color: var(--shell-text);
+}
+
+.onboard-preview-card small {
+	display: block;
+	margin-top: 4px;
+	font-size: 12px;
+	line-height: 1.55;
+	color: var(--shell-muted);
+}
+
+.is-pristine .workspace-masthead {
+	display: none;
+}
+
+.is-pristine .objectives-panel {
+	display: none;
+}
+
+.is-pristine .setup-panel {
+	grid-column: span 12;
+}
+
+.is-pristine .setup-grid {
+	grid-template-columns: 1fr 1fr;
+}
+
+body:not(.is-pristine) #onboardingHero {
+	display: none;
+}
+
 .workspace-masthead {
 	display: grid;
 	grid-template-columns: 1.2fr 1fr;
@@ -425,6 +527,15 @@
 .metric-tile:hover {
 	transform: translateY(-2px);
 	border-color: #cdd6e1;
+}
+
+@media (max-width: 1080px) {
+	.onboarding-hero {
+		grid-template-columns: 1fr;
+	}
+	.is-pristine .setup-grid {
+		grid-template-columns: 1fr;
+	}
 }
 
 .metric-label {
