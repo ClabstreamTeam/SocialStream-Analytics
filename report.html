@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SocialStream Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/shared.css">
+  <link rel="stylesheet" href="assets/css/report.css">
+</head>
+<body>
+  <div class="report-wrap" id="reportRoot">
+    <header class="report-header">
+      <img src="assets/branding/socialstream-logo.png" alt="SocialStream" class="report-logo" onerror="this.style.display='none'">
+      <div>
+        <h1>Analytics Report</h1>
+        <p id="reportGeneratedAt"></p>
+      </div>
+    </header>
+
+    <section>
+      <h2>Executive Summary</h2>
+      <div id="reportNarrative" class="report-card"></div>
+      <ul id="reportRecs" class="report-list"></ul>
+    </section>
+
+    <section>
+      <h2>Key Metrics</h2>
+      <div id="reportKpis" class="kpi-grid"></div>
+    </section>
+
+    <section>
+      <h2>Charts</h2>
+      <div id="reportCharts" class="chart-grid"></div>
+    </section>
+
+    <section>
+      <h2>Highlights & Lowlights</h2>
+      <div id="reportHighlights" class="cards-grid"></div>
+      <div id="reportLowlights" class="cards-grid"></div>
+    </section>
+
+    <section>
+      <h2>Data Table</h2>
+      <div id="reportTable" class="report-card"></div>
+    </section>
+  </div>
+
+  <script>
+    const payload = JSON.parse(localStorage.getItem('socialstreamReportPayload') || 'null');
+    const root = document.getElementById('reportRoot');
+    if (!payload) {
+      root.innerHTML = '<p style="padding:40px">No report data found. Open the dashboard and click Export PDF.</p>';
+    } else {
+      document.getElementById('reportGeneratedAt').textContent = `Generated on ${new Date().toLocaleString()}`;
+      document.getElementById('reportNarrative').innerHTML = payload.narrative || 'No narrative available.';
+      document.getElementById('reportRecs').innerHTML = payload.recs || '';
+      document.getElementById('reportKpis').innerHTML = payload.kpis || '';
+      document.getElementById('reportHighlights').innerHTML = payload.highlights || '';
+      document.getElementById('reportLowlights').innerHTML = payload.lowlights || '';
+      document.getElementById('reportTable').innerHTML = payload.table || '';
+      const chartsWrap = document.getElementById('reportCharts');
+      (payload.charts || []).forEach(c => {
+        const card = document.createElement('article');
+        card.className = 'report-card';
+        card.innerHTML = `<h3>${c.title}</h3><img src="${c.image}" alt="${c.title}" />`;
+        chartsWrap.appendChild(card);
+      });
+      if (new URLSearchParams(location.search).get('autoprint') === '1') {
+        setTimeout(() => window.print(), 350);
+      }
+    }
+  </script>
+</body>
+</html>
