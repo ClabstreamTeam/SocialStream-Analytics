@@ -8,7 +8,7 @@ This repo keeps the frontend fully static and moves secret API usage to Vercel s
 
 - `index.html` remains the static UI entry point
 - Apify calls are routed through serverless endpoints under `api/apify/`
-- OpenRouter chat calls are routed through `api/chat.js`
+- The OpenRouter chat integration has been removed
 - Secrets are stored in environment variables, not in browser code
 
 ## Files added
@@ -18,7 +18,6 @@ This repo keeps the frontend fully static and moves secret API usage to Vercel s
 - `api/apify/run.js` — starts Apify actor runs
 - `api/apify/status.js` — polls Apify run status
 - `api/apify/dataset.js` — fetches Apify dataset items
-- `api/chat.js` — forwards OpenRouter chat requests securely
 
 ## Local development
 
@@ -30,10 +29,9 @@ This repo keeps the frontend fully static and moves secret API usage to Vercel s
    ```bash
    cp .env.example .env.local
    ```
-3. Fill in `.env.local` with your real keys:
+3. Fill in `.env.local` with your real key:
    ```dotenv
    APIFY_TOKEN=your_real_apify_token
-   OPENROUTER_KEY=your_real_openrouter_key
    ```
 4. Run locally:
    ```bash
@@ -49,7 +47,6 @@ This repo keeps the frontend fully static and moves secret API usage to Vercel s
 2. Add production environment variables:
    ```bash
    vercel env add APIFY_TOKEN production
-   vercel env add OPENROUTER_KEY production
    ```
 3. Deploy to production:
    ```bash
@@ -60,4 +57,4 @@ This repo keeps the frontend fully static and moves secret API usage to Vercel s
 
 - Do not commit real secrets.
 - `index.html` should remain static and consume only `/api/*` endpoints.
-- The backend functions require `APIFY_TOKEN` and `OPENROUTER_KEY` in the Vercel environment.
+- The backend functions require `APIFY_TOKEN` in the Vercel environment.

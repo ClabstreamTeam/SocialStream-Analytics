@@ -1528,13 +1528,766 @@
       }
     }
   </style>
+  <style>
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px 24px;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+    }
+    .site-nav .nav-left,
+    .site-nav .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .site-nav .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .site-nav .nav-links a {
+      color: var(--text-secondary);
+      font-size: 14px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color .2s ease;
+    }
+    .site-nav .nav-links a:hover {
+      color: var(--blue-dark);
+    }
+    .site-nav .btn {
+      white-space: nowrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 22px;
+      border-radius: 999px;
+      border: none;
+      background: var(--blue-primary);
+      color: white;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform .2s ease, filter .2s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(59, 130, 246, 0.24);
+      background: white;
+      color: var(--blue-dark);
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform .2s ease, background .2s ease;
+    }
+    .btn-secondary:hover {
+      transform: translateY(-1px);
+      background: rgba(59, 130, 246, 0.08);
+    }
+    .hero-section {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(380px, 0.9fr);
+      gap: 32px;
+      align-items: center;
+      padding: 64px 24px 48px;
+      margin-bottom: 40px;
+    }
+    .hero-copy {
+      max-width: 680px;
+    }
+    .hero-copy .eyebrow,
+    .section-header .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: 12px;
+      color: var(--blue-dark);
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .hero-copy h1 {
+      font-size: clamp(2.75rem, 5vw, 4.5rem);
+      line-height: 1.02;
+      margin: 0 0 24px;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      max-width: 10ch;
+    }
+    .hero-copy p.hero-text {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      max-width: 680px;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    .hero-meta span {
+      font-weight: 600;
+    }
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+    }
+    .hero-card {
+      width: 100%;
+      min-height: 420px;
+      padding: 28px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(249,250,251,0.96));
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: 0 30px 80px rgba(15, 23, 42, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .hero-card-label {
+      display: inline-flex;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--blue-dark);
+      background: rgba(59, 130, 246, 0.12);
+      margin-bottom: 20px;
+      width: fit-content;
+    }
+    .hero-chart-placeholder {
+      flex: 1;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(15,23,42,0.05), rgba(15,23,42,0.08));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      font-size: 14px;
+      text-align: center;
+      padding: 20px;
+    }
+    .value-prop,
+    .feature-grid,
+    .use-cases,
+    .pricing-section,
+    .plan-comparison,
+    .faq-section,
+    .final-cta,
+    .site-footer {
+      padding: 56px 24px;
+    }
+    .section-header {
+      max-width: 820px;
+      margin: 0 auto 32px;
+      text-align: center;
+    }
+    .section-header h2 {
+      font-size: clamp(2.05rem, 2.5vw, 3rem);
+      line-height: 1.05;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    .section-header p {
+      color: var(--text-secondary);
+      line-height: 1.85;
+      max-width: 720px;
+      margin: 16px auto 0;
+    }
+    .trust-strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 26px 24px;
+      margin: 0 auto 40px;
+      max-width: 1180px;
+      border-radius: 18px;
+      background: rgba(59, 130, 246, 0.08);
+      color: var(--blue-dark);
+      font-size: 13px;
+      text-align: center;
+    }
+    .trust-strip strong {
+      color: var(--text-primary);
+    }
+    .feature-grid,
+    .use-cases {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    .feature-grid .grid-4,
+    .use-cases .grid-4,
+    .pricing-grid,
+    .faq-grid {
+      display: grid;
+      gap: 20px;
+    }
+    .feature-grid .grid-4,
+    .use-cases .grid-4 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .feature-card,
+    .use-case-card,
+    .pricing-card,
+    .faq-card,
+    .enterprise-card {
+      padding: 30px;
+      border-radius: 22px;
+      background: var(--bg-secondary);
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.05);
+    }
+    .feature-card h3,
+    .use-case-card h3,
+    .pricing-card h3,
+    .enterprise-card h3 {
+      margin: 0 0 14px;
+      font-size: 18px;
+      color: var(--text-primary);
+    }
+    .feature-card p,
+    .use-case-card p,
+    .pricing-card p,
+    .faq-card p {
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.8;
+    }
+    .feature-card .feature-number,
+    .use-case-card .feature-number {
+      display: inline-flex;
+      width: 38px;
+      height: 38px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: rgba(59, 130, 246, 0.14);
+      color: var(--blue-dark);
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+    .pricing-section .billing-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .billing-switch {
+      border: 1px solid rgba(15, 23, 42, 0.12);
+      border-radius: 999px;
+      padding: 10px 18px;
+      background: white;
+      color: var(--blue-dark);
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .2s ease, background .2s ease;
+    }
+    .billing-switch:hover {
+      transform: translateY(-1px);
+      background: rgba(59, 130, 246, 0.08);
+    }
+    .pricing-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-bottom: 24px;
+    }
+    .pricing-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 420px;
+    }
+    .pricing-card.recommended {
+      border-color: rgba(59, 130, 246, 0.3);
+      background: rgba(59, 130, 246, 0.05);
+    }
+    .pricing-card .price {
+      font-size: clamp(2rem, 2.4vw, 2.7rem);
+      font-weight: 800;
+      color: var(--text-primary);
+      margin: 0 0 10px;
+    }
+    .pricing-card .price-meta {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+    .pricing-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0 0;
+      display: grid;
+      gap: 12px;
+      color: var(--text-secondary);
+    }
+    .pricing-card ul li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+    .pricing-card ul li::before {
+      content: '•';
+      color: var(--blue-dark);
+      font-size: 18px;
+      line-height: 1;
+    }
+    .pricing-card .plan-action {
+      margin-top: 28px;
+    }
+    .pricing-card .plan-badge {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--blue-dark);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      width: fit-content;
+    }
+    .plan-highlight {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--blue-primary);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      letter-spacing: .02em;
+    }
+    .plan-comparison .comparison-table {
+      overflow-x: auto;
+    }
+    .comparison-table table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      background: white;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+    }
+    .comparison-table th,
+    .comparison-table td {
+      padding: 18px 14px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+      text-align: left;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    .comparison-table th {
+      color: var(--text-primary);
+      background: rgba(59, 130, 246, 0.04);
+      font-weight: 700;
+    }
+    .comparison-table td.plan-name {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .comparison-table td.feature-yes {
+      color: var(--blue-dark);
+      font-weight: 600;
+    }
+    .faq-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .faq-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .faq-card h3 {
+      margin: 0;
+      font-size: 17px;
+    }
+    .final-cta {
+      background: linear-gradient(180deg, rgba(59, 130, 246, 0.12), rgba(255, 255, 255, 0.96));
+      border-top: 1px solid rgba(59, 130, 246, 0.15);
+      text-align: center;
+    }
+    .final-cta h2 {
+      font-size: clamp(2rem, 2.8vw, 3.2rem);
+      margin: 16px auto 24px;
+      max-width: 760px;
+    }
+    .site-footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid rgba(15, 23, 42, 0.08);
+      color: var(--text-secondary);
+    }
+    .site-footer .footer-grid {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    .site-footer h3 {
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .site-footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+    .site-footer a:hover {
+      color: var(--blue-dark);
+    }
+    @media (max-width: 1080px) {
+      .hero-section,
+      .pricing-grid,
+      .feature-grid .grid-4,
+      .use-cases .grid-4,
+      .faq-grid,
+      .site-footer .footer-grid {
+        grid-template-columns: 1fr;
+      }
+      .site-nav {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .site-nav .nav-links {
+        justify-content: center;
+      }
+      .hero-card {
+        min-height: 360px;
+      }
+    }
+    @media (max-width: 720px) {
+      .hero-section {
+        padding: 48px 18px 32px;
+      }
+      .hero-copy h1 {
+        font-size: 2.8rem;
+      }
+      .hero-actions,
+      .hero-meta {
+        justify-content: center;
+      }
+      .site-nav .nav-links {
+        gap: 16px;
+      }
+      .pricing-card,
+      .feature-card,
+      .use-case-card,
+      .faq-card,
+      .enterprise-card {
+        padding: 20px;
+      }
+    }
+  </style>
 </head>
 
 <body>
   <div class="wrap">
+    <header class="site-nav">
+      <div class="nav-left">
+        <div class="logo-wrap">
+          <img
+            src="https://images.glints.com/unsafe/glints-dashboard.oss-ap-southeast-1.aliyuncs.com/company-logo/9a8b8496cde4c7c28571b7c676819468.png"
+            alt="Clabstream" class="logo-img" onerror="this.style.display='none'">
+          <div>
+            <div class="logo-text">Clabstream</div>
+          </div>
+        </div>
+      </div>
+      <nav class="nav-links print-hidden">
+        <a href="#product">Product</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#comparison">Compare</a>
+        <a href="#faq">FAQ</a>
+        <a href="#dashboard">Dashboard</a>
+      </nav>
+      <div class="nav-actions print-hidden">
+        <a href="#pricing" class="btn btn-ghost">Start Trial</a>
+      </div>
+    </header>
+
+    <section class="hero-section" id="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">Enterprise TikTok analytics for modern teams</div>
+        <h1>Turn TikTok performance into predictable growth.</h1>
+        <p class="hero-text">Clabstream combines TikTok scraping, executive dashboards, and AI-powered insights in one polished analytics experience. Launch faster, compare profiles, and make decisions with confidence.</p>
+        <div class="hero-actions">
+          <a href="#dashboard" class="btn btn-primary">Start Free Demo</a>
+          <a href="#pricing" class="btn btn-secondary">View Pricing</a>
+          <a href="#contact" class="btn btn-ghost">Book Demo</a>
+        </div>
+        <div class="hero-meta">
+          <span>Save 20% annually on paid plans.</span>
+          <span>Supports teams from solopreneurs to large agencies.</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card">
+          <div class="hero-card-label">Live dashboard preview</div>
+          <div class="hero-chart-placeholder">Your TikTok analytics experience stays here as a product demo.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="value-prop" id="product">
+      <div class="section-header">
+        <div class="eyebrow">Why Clabstream</div>
+        <h2>Built for brands, agencies, and growth teams who need TikTok analytics that actually delivers.</h2>
+        <p>Use one platform to analyze multiple profiles, compare performance across campaigns, and turn raw TikTok data into executive-ready reporting.</p>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-number">01</div>
+          <h3>High-impact analytics</h3>
+          <p>Track profile performance across likes, reach, engagement, and content trends with a dashboard built for speed and clarity.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-number">02</div>
+          <h3>AI-assisted insights</h3>
+          <p>Get narrative summaries, growth recommendations, and campaign signals from an AI assistant trained on your scraped TikTok data.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-number">03</div>
+          <h3>Executive reporting</h3>
+          <p>Export clean dashboards, CSVs, PNGs and PDFs for clients, leadership, or campaign debriefs without manual spreadsheet work.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-number">04</div>
+          <h3>Team-ready controls</h3>
+          <p>From a single seat starter plan to agency-grade multi-brand dashboards, Clabstream scales with growing teams and review workflows.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust-strip">
+      <strong>Trusted by early adopters in creator economy, marketing teams, and digital agencies.</strong>
+      <span>Client revenue uplift</span>
+      <span>Analytics time saved</span>
+      <span>Faster trend velocity</span>
+    </section>
+
+    <section class="use-cases">
+      <div class="section-header">
+        <div class="eyebrow">Use cases</div>
+        <h2>One dashboard for every TikTok growth workflow.</h2>
+        <p>Whether you are testing creative, reporting to clients, or planning a launch, Clabstream keeps your team aligned on the metrics that matter.</p>
+      </div>
+      <div class="grid-4">
+        <div class="use-case-card">
+          <h3>Agency reporting</h3>
+          <p>Build client-ready dashboards, export branded reports, and manage performance across multiple accounts without switching tools.</p>
+        </div>
+        <div class="use-case-card">
+          <h3>Creator growth</h3>
+          <p>Understand which content formats move the needle, when to post, and which hashtags amplify reach in real time.</p>
+        </div>
+        <div class="use-case-card">
+          <h3>Campaign optimization</h3>
+          <p>Compare profiles, benchmark campaign performance, and spot which TikTok assets generate the strongest engagement.</p>
+        </div>
+        <div class="use-case-card">
+          <h3>Executive reviews</h3>
+          <p>Create concise executive summaries, highlight winning posts, and share fast insights with stakeholders.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="pricing-section" id="pricing">
+      <div class="section-header">
+        <div class="eyebrow">Pricing</div>
+        <h2>Flexible plans for every stage of TikTok growth.</h2>
+        <p>Choose between monthly billing or save 20% with annual plans.</p>
+      </div>
+      <div class="billing-toggle">
+        <span>Monthly</span>
+        <button class="billing-switch" type="button">Switch to Annual</button>
+        <span>Save 20%</span>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="plan-badge">Demo</div>
+          <h3>Demo</h3>
+          <p class="price" data-monthly="$0/mo" data-annual="$0/mo">$0/mo</p>
+          <p class="price-meta" data-monthly="Demo dataset only · no live scraping" data-annual="Demo dataset only · no live scraping">Demo dataset only · no live scraping</p>
+          <p style="color:var(--text-primary);font-size:14px;margin:18px 0 0;">Get a feel for the Clabstream dashboard and sample analytics without any setup.</p>
+          <ul>
+            <li>Demo dataset only</li>
+            <li>No live scraping</li>
+            <li>No client exports</li>
+            <li>Limited AI access</li>
+          </ul>
+          <div class="plan-action"><a href="#dashboard" class="btn btn-primary">Try Demo</a></div>
+        </div>
+        <div class="pricing-card">
+          <div class="plan-badge">Starter</div>
+          <h3>Starter</h3>
+          <p class="price" data-monthly="$49/mo" data-annual="$39/mo">$49/mo</p>
+          <p class="price-meta" data-monthly="Billed monthly" data-annual="Billed annually · save 20%">Billed monthly</p>
+          <p style="color:var(--text-primary);font-size:14px;margin:18px 0 0;">Start tracking 3 profiles and convert TikTok performance into actionable team reporting.</p>
+          <ul>
+            <li>Up to 3 profiles</li>
+            <li>Up to 90-day history</li>
+            <li>Core dashboard</li>
+            <li>CSV export</li>
+            <li>1 seat</li>
+            <li>Email support</li>
+          </ul>
+          <div class="plan-action"><a href="#pricing" class="btn btn-secondary">Start Trial</a></div>
+        </div>
+        <div class="pricing-card recommended">
+          <div class="plan-highlight">Most Popular</div>
+          <div class="plan-badge">Growth</div>
+          <h3>Growth</h3>
+          <p class="price" data-monthly="$149/mo" data-annual="$119/mo">$149/mo</p>
+          <p class="price-meta" data-monthly="Billed monthly" data-annual="Billed annually · save 20%">Billed monthly</p>
+          <p style="color:var(--text-primary);font-size:14px;margin:18px 0 0;">Best for teams scaling TikTok analytics with 10 profiles, AI insights, and executive-ready exports.</p>
+          <ul>
+            <li>Up to 10 profiles</li>
+            <li>Up to 12 months history</li>
+            <li>Profile comparison</li>
+            <li>Executive summary</li>
+            <li>PDF, PNG, CSV exports</li>
+            <li>AI insights / AI assistant</li>
+            <li>3 seats</li>
+            <li>Priority support</li>
+          </ul>
+          <div class="plan-action"><a href="#pricing" class="btn btn-primary">Upgrade to Growth</a></div>
+        </div>
+        <div class="pricing-card">
+          <div class="plan-badge">Agency</div>
+          <h3>Agency</h3>
+          <p class="price" data-monthly="$349/mo" data-annual="$279/mo">$349/mo</p>
+          <p class="price-meta" data-monthly="Billed monthly" data-annual="Billed annually · save 20%">Billed monthly</p>
+          <p style="color:var(--text-primary);font-size:14px;margin:18px 0 0;">Deliver polished, brandable reporting for clients and manage multiple profiles with ease.</p>
+          <ul>
+            <li>Up to 30 profiles</li>
+            <li>Multi-brand / client usage</li>
+            <li>White-label exports</li>
+            <li>Scheduled reporting</li>
+            <li>Client-ready dashboards</li>
+            <li>10 seats</li>
+            <li>Priority onboarding</li>
+          </ul>
+          <div class="plan-action"><a href="#pricing" class="btn btn-secondary">Book Demo</a></div>
+        </div>
+      </div>
+      <div class="enterprise-card">
+        <h3>Enterprise</h3>
+        <p>Custom plan starting from $999/mo with API access, SSO, custom deployment, and dedicated onboarding.</p>
+        <p style="color:var(--text-primary);font-size:14px;margin:18px 0 0;">Custom limits, security, and integrations for enterprise-scale TikTok analytics programs.</p>
+        <div class="plan-action"><a href="#contact" class="btn btn-primary">Contact Sales</a></div>
+      </div>
+    </section>
+
+    <section class="plan-comparison" id="comparison">
+      <div class="section-header">
+        <div class="eyebrow">Plan comparison</div>
+        <h2>Choose the right tier for your team and use case.</h2>
+      </div>
+      <div class="comparison-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Demo</th>
+              <th>Starter</th>
+              <th>Growth</th>
+              <th>Agency</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Live TikTok scraping</td><td>—</td><td class="feature-yes">✓</td><td class="feature-yes">✓</td><td class="feature-yes">✓</td></tr>
+            <tr><td>Profile limit</td><td>Demo only</td><td>3</td><td>10</td><td>30</td></tr>
+            <tr><td>History window</td><td>Demo only</td><td>90 days</td><td>12 months</td><td>12 months</td></tr>
+            <tr><td>AI insights</td><td>Limited</td><td>—</td><td class="feature-yes">✓</td><td class="feature-yes">✓</td></tr>
+            <tr><td>Profile comparison</td><td>—</td><td>—</td><td class="feature-yes">✓</td><td class="feature-yes">✓</td></tr>
+            <tr><td>Exports: CSV / PNG / PDF</td><td>—</td><td>CSV</td><td class="feature-yes">✓</td><td class="feature-yes">✓</td></tr>
+            <tr><td>Seats</td><td>Demo</td><td>1</td><td>3</td><td>10</td></tr>
+            <tr><td>Priority support</td><td>—</td><td>—</td><td class="feature-yes">✓</td><td class="feature-yes">✓</td></tr>
+            <tr><td>White-label / client reporting</td><td>—</td><td>—</td><td>—</td><td class="feature-yes">✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="faq-section" id="faq">
+      <div class="section-header">
+        <div class="eyebrow">FAQ</div>
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="faq-grid">
+        <div class="faq-card">
+          <h3>How does annual billing work?</h3>
+          <p>Annual plans are billed once per year and save 20% compared to monthly pricing. You retain the same feature set and gain long-term cost predictability.</p>
+        </div>
+        <div class="faq-card">
+          <h3>What export formats are available?</h3>
+          <p>Starter includes CSV export. Growth and Agency include PNG and PDF export for polished client reports and executive sharing.</p>
+        </div>
+        <div class="faq-card">
+          <h3>How many seats do I get?</h3>
+          <p>Starter includes one seat, Growth includes three seats, and Agency includes ten seats so your team can collaborate on analysis and reporting.</p>
+        </div>
+        <div class="faq-card">
+          <h3>What does white-labeling include?</h3>
+          <p>Agency-level white-labeling provides branded exports, client-ready dashboard assets, and presentation-ready reporting options for your team.</p>
+        </div>
+        <div class="faq-card">
+          <h3>What is the Enterprise plan?</h3>
+          <p>Enterprise is a custom offering starting at $999/mo with API access, SSO, custom deployment, dedicated onboarding, and higher usage limits.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta" id="contact">
+      <div class="section-header">
+        <div class="eyebrow">Ready to scale</div>
+        <h2>Start your demo or book a personalized walkthrough today.</h2>
+        <div class="hero-actions" style="justify-content:center;">
+          <a href="#dashboard" class="btn btn-primary">Start Free Demo</a>
+          <a href="#pricing" class="btn btn-secondary">Book Demo</a>
+        </div>
+      </div>
+    </section>
 
     <!-- ══ HEADER ══ -->
-    <header class="site-header">
+    <header class="site-header" id="dashboard">
       <div class="logo-wrap">
         <img
           src="https://images.glints.com/unsafe/glints-dashboard.oss-ap-southeast-1.aliyuncs.com/company-logo/9a8b8496cde4c7c28571b7c676819468.png"
@@ -3157,157 +3910,53 @@
 
   <script>
     /* ══════════════════════════════════
-       OPENROUTER AI CHAT ASSISTANT
+       PRICING TOGGLE
     ══════════════════════════════════ */
-    const OR_MODELS = [
-      'openrouter/auto',
-      'anthropic/claude-haiku-4.5',
-      'anthropic/claude-opus-4.6',
-      'anthropic/claude-sonnet-4.5',
-      'anthropic/claude-sonnet-4.6',
-      'deepseek/deepseek-r1',
-      'google/gemini-2.5-flash-lite',
-      'google/gemini-3-flash-preview',
-      'google/gemini-3-pro-preview',
-      'google/gemini-3.1-pro-preview',
-      'meta-llama/llama-3.3-70b-instruct',
-      'minimax/minimax-m2.5',
-      'mistralai/codestral-2508',
-      'mistralai/mistral-7b-instruct-v0.1',
-      'mistralai/mistral-large',
-      'mistralai/mistral-medium-3.1',
-      'mistralai/mistral-small-3.2-24b-instruct-2506',
-      'moonshotai/kimi-k2-thinking',
-      'moonshotai/kimi-k2.5',
-      'openai/gpt-5',
-      'openai/gpt-5-mini',
-      'openai/gpt-5-nano',
-      'openai/gpt-5.1',
-      'openai/gpt-5.2',
-      'openai/gpt-5.2-pro',
-      'openai/gpt-5.3-chat',
-      'openai/gpt-oss-120b',
-      'perplexity/sonar',
-      'qwen/qwen3-235b-a22b',
-      'x-ai/grok-3',
-      'x-ai/grok-3-mini',
-      'x-ai/grok-4',
-      'x-ai/grok-4.1-fast',
-      'z-ai/glm-5'
-    ];
-    const OR_BASE = '/api/chat';
+    function setPricingMode(mode) {
+      const priceEls = document.querySelectorAll('.pricing-card .price');
+      const metaEls = document.querySelectorAll('.pricing-card .price-meta');
+      const toggleButton = document.querySelector('.billing-switch');
 
-    let chatHistory = [];
-    let chatOpen = false;
-    let chatInitialized = false;
-    let activeModelIdx = 0; // tracks which model is currently working
-
-    function showChatFab() {
-      const fab = document.getElementById('chatFab');
-      fab.style.display = 'flex';
-    }
-
-    function toggleChat() {
-      chatOpen = !chatOpen;
-      const panel = document.getElementById('chatPanel');
-      panel.classList.toggle('open', chatOpen);
-      if (chatOpen && !chatInitialized) {
-        chatInitialized = true;
-        addAIMessage('Hi! I\'m your Clabstream AI assistant 🤖\n\nI have access to all your scraped TikTok data. Ask me anything — best performing posts, engagement trends, hashtag strategy, or posting time recommendations.');
-      }
-      if (chatOpen) setTimeout(() => document.getElementById('chatInput').focus(), 300);
-    }
-
-    function askChip(el) {
-      document.getElementById('chatInput').value = el.textContent.trim();
-      document.getElementById('chatSuggestions').style.display = 'none';
-      sendChat();
-    }
-
-    /* Build a rich data summary to inject as system context */
-    function buildDataContext() {
-      if (!globalData || !globalData.length) return 'No data loaded.';
-
-      const total = globalData.length;
-      const profiles = [...new Set(globalData.map(r => r.profile).filter(Boolean))];
-      const totalLikes = globalData.reduce((s, r) => s + Number(r.diggCount || 0), 0);
-      const totalComments = globalData.reduce((s, r) => s + Number(r.commentCount || 0), 0);
-      const totalSaves = globalData.reduce((s, r) => s + Number(r.collectCount || 0), 0);
-      const totalShares = globalData.reduce((s, r) => s + Number(r.shareCount || 0), 0);
-      const totalReposts = globalData.reduce((s, r) => s + Number(r.repostCount || 0), 0);
-      const totalPlays = globalData.reduce((s, r) => s + Number(r.playCount || 0), 0);
-      const adPosts = globalData.filter(r => r.isAd).length;
-      const avgLikes = (totalLikes / total).toFixed(0);
-      const avgPlays = (totalPlays / total).toFixed(0);
-
-      const dates = globalData.map(r => r.createTimeISO ? new Date(r.createTimeISO) : null).filter(Boolean);
-      const minDate = dates.length ? new Date(Math.min(...dates)).toISOString().split('T')[0] : 'N/A';
-      const maxDate = dates.length ? new Date(Math.max(...dates)).toISOString().split('T')[0] : 'N/A';
-
-      // Top 3 posts by likes (trimmed to save tokens)
-      const top5 = [...globalData].sort((a, b) => Number(b.diggCount || 0) - Number(a.diggCount || 0)).slice(0, 3);
-      const top5str = top5.map((p, i) => `${i + 1}. "${(p.desc || '').slice(0, 45)}" — ${Number(p.diggCount || 0).toLocaleString()} likes, ${Number(p.playCount || 0).toLocaleString()} plays (@${p.profile})`).join('\n');
-
-      // Bottom 3 posts
-      const bot3 = [...globalData].filter(r => Number(r.playCount || 0) >= 100).sort((a, b) => Number(a.diggCount || 0) - Number(b.diggCount || 0)).slice(0, 3);
-      const bot3str = bot3.map((p, i) => `${i + 1}. "${(p.desc || '').slice(0, 45)}" — ${Number(p.diggCount || 0).toLocaleString()} likes, ${Number(p.playCount || 0).toLocaleString()} plays (@${p.profile})`).join('\n');
-
-      // Hashtag frequency
-      const hashSt = {};
-      globalData.forEach(r => {
-        for (const k in r) if (k.startsWith('hashtags/') && k.endsWith('/name') && r[k] && typeof r[k] === 'string')
-          hashSt[r[k].toLowerCase()] = (hashSt[r[k].toLowerCase()] || 0) + 1;
+      priceEls.forEach(el => {
+        if (el.dataset[mode]) el.textContent = el.dataset[mode];
       });
-      const topTags = Object.entries(hashSt).sort((a, b) => b[1] - a[1]).slice(0, 10).map(e => `#${e[0]}(${e[1]})`).join(', ');
 
-      // Day of week
-      const DA = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      const daySt = {}; DA.forEach(d => { daySt[d] = 0; });
-      globalData.forEach(r => { const d = r.createTimeISO ? new Date(r.createTimeISO) : null; if (d) daySt[DA[d.getDay()]] += Number(r.diggCount || 0); });
-      const bestDay = Object.entries(daySt).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+      metaEls.forEach(el => {
+        const metaText = el.dataset[mode];
+        if (metaText) el.textContent = metaText;
+      });
 
-      // Hour of day
-      const hourSt = {};
-      globalData.forEach(r => { const d = r.createTimeISO ? new Date(r.createTimeISO) : null; if (d) { const h = d.getHours().toString().padStart(2, '0'); hourSt[h] = (hourSt[h] || 0) + 1; } });
-      const bestHour = Object.entries(hourSt).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
-
-      return `
-== TIKTOK ANALYTICS DATA SUMMARY ==
-Profiles analyzed: ${profiles.map(p => '@' + p).join(', ')}
-Date range: ${minDate} to ${maxDate}
-Total posts: ${total}
-Boosted posts (isAd): ${adPosts} (${total > 0 ? ((adPosts / total) * 100).toFixed(1) : 0}%)
-
-== ENGAGEMENT TOTALS ==
-Total Likes: ${totalLikes.toLocaleString()} (avg ${avgLikes}/post)
-Total Comments: ${totalComments.toLocaleString()}
-Total Saves: ${totalSaves.toLocaleString()}
-Total Shares: ${totalShares.toLocaleString()}
-Total Reposts: ${totalReposts.toLocaleString()}
-Total Plays: ${totalPlays.toLocaleString()} (avg ${avgPlays}/post)
-
-== TOP 5 POSTS BY LIKES ==
-${top5str}
-
-== LOWEST 3 POSTS (lowlights) ==
-${bot3str}
-
-== CONTENT PATTERNS ==
-Top hashtags: ${topTags || 'none detected'}
-Best day (by likes): ${bestDay}
-Most frequent posting hour: ${bestHour}:00
-
-== INSTRUCTIONS ==
-You are Clabstream AI, an expert TikTok analytics assistant.
-Answer user questions based ONLY on the data above. Be concise, insightful, and actionable.
-Format numbers with commas. Use bullet points for lists. Keep answers under 200 words unless the user asks for detail.
-CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight to the final answer.
-`.trim();
+      toggleButton.textContent = mode === 'annual' ? 'Switch to Monthly' : 'Switch to Annual';
+      toggleButton.dataset.mode = mode;
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggleButton = document.querySelector('.billing-switch');
+      if (!toggleButton) return;
+      toggleButton.dataset.mode = 'monthly';
+      setPricingMode('monthly');
+      toggleButton.addEventListener('click', () => {
+        const nextMode = toggleButton.dataset.mode === 'monthly' ? 'annual' : 'monthly';
+        setPricingMode(nextMode);
+      });
+    });
 
     /* ══════════════════════════════════
-       DATA TABLE RENDERING
+       AI CHAT FALLBACK
     ══════════════════════════════════ */
+    function sendChat() {
+      const input = document.getElementById('chatInput');
+      const text = input?.value.trim();
+      if (!text) return;
+
+      input.value = '';
+      input.style.height = 'auto';
+      document.getElementById('chatSend').disabled = true;
+      addUserMessage(text);
+      addAIMessage('⚠️ AI assistant is currently offline. Please use the dashboard analytics or contact sales for a full AI-enabled experience.');
+      document.getElementById('chatSend').disabled = false;
+    }
+
     function renderDataTable(data) {
       const tbody = document.getElementById('dataTableBody');
       if (!data || !data.length) {
@@ -3411,90 +4060,43 @@ CRITICAL: DO NOT output your internal reasoning or thinking process. Go straight
       showToast('Chart exported as PNG!', 'success');
     }
 
-    async function sendChat() {
+    function sendChat() {
       const input = document.getElementById('chatInput');
-      const text = input.value.trim();
+      const text = input?.value.trim();
       if (!text) return;
 
-    input.value = '';
-    input.style.height = 'auto';
-    document.getElementById('chatSend').disabled = true;
-    document.getElementById('chatSuggestions').style.display = 'none';
+      input.value = '';
+      input.style.height = 'auto';
+      document.getElementById('chatSend').disabled = true;
+      document.getElementById('chatSuggestions').style.display = 'none';
 
-    addUserMessage(text);
-    chatHistory.push({ role: 'user', content: text });
-    addTyping();
-
-    const systemCtx = buildDataContext();
-
-    // Try models in order, fall back on quota/unavailability
-    let lastErr = null;
-    for (let idx = activeModelIdx; idx < OR_MODELS.length; idx++) {
-      const model = OR_MODELS[idx];
-      try {
-        const res = await fetch(OR_BASE, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            model: model,
-            messages: [{ role: 'system', content: systemCtx }, ...chatHistory],
-            temperature: 0.7,
-            max_tokens: 400
-          })
-        });
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          const msg = err?.error?.message || `HTTP ${res.status}`;
-          const isQuota = msg.toLowerCase().includes('quota') || res.status === 429 || res.status === 402 || res.status === 403;
-          if (isQuota && idx + 1 < OR_MODELS.length) {
-            console.warn(`[ClabAI] ${model} unavailable, trying ${OR_MODELS[idx + 1]}…`);
-            lastErr = new Error(msg);
-            continue;
-          }
-          throw new Error(msg);
-        }
-
-        const data = await res.json();
-        const reply = data?.choices?.[0]?.message?.content
-          || 'Sorry, I got an empty response. Please try again.';
-
-        // Persist which model worked
-        if (idx !== activeModelIdx) {
-          activeModelIdx = idx;
-          // Update header subtitle
-          document.querySelector('#chatPanel .chat-header div:nth-child(2) div:last-child').textContent =
-            `Powered by ${model} · Ask about your data`;
-        }
-
-        removeTyping();
-        addAIMessage(reply);
-        chatHistory.push({ role: 'assistant', content: reply });
-        if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
-        lastErr = null;
-        break;
-
-      } catch (err) {
-        lastErr = err;
-        const isQuota = err.message.toLowerCase().includes('quota') || err.message.includes('429');
-        if (isQuota && idx + 1 < OR_MODELS.length) continue;
-        break;
-      }
-    }
-
-    if (lastErr) {
-      removeTyping();
-      // Print raw error directly
-      addAIMessage(`⚠️ API Error: ${lastErr.message}`);
-      console.error('[ClabAI RAW ERROR]', lastErr);
-    }
-
-    document.getElementById('chatSend').disabled = false;
-    input.focus();
+      addUserMessage(text);
+      addAIMessage('⚠️ AI assistant is currently offline. Please use the dashboard analytics or contact sales for a full AI-enabled experience.');
+      document.getElementById('chatSend').disabled = false;
     }
   </script>
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <h3>Clabstream</h3>
+        <p>Enterprise-ready TikTok analytics, AI insights, and executive reporting in one polished SaaS experience.</p>
+      </div>
+      <div>
+        <h3>Product</h3>
+        <a href="#product">Features</a><br>
+        <a href="#pricing">Pricing</a><br>
+        <a href="#comparison">Compare</a><br>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div>
+        <h3>Contact</h3>
+        <a href="mailto:sales@clabstream.com">sales@clabstream.com</a><br>
+        <a href="#contact">Book Demo</a><br>
+        <span style="display:block;margin-top:12px;font-size:13px;color:var(--text-secondary);">© 2026 Clabstream. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
 </body>
 
 </html>
