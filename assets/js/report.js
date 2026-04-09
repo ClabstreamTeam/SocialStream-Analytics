@@ -14,7 +14,11 @@
   };
 
   const generatedAt = document.getElementById('reportGeneratedAt');
-  if (generatedAt) generatedAt.textContent = `Generated on ${new Date().toLocaleString()}`;
+  if (generatedAt) {
+    const ts = payload.generatedAt ? new Date(payload.generatedAt) : new Date();
+    const view = payload.activeView ? ` · ${payload.activeView}` : '';
+    generatedAt.textContent = `Generated on ${ts.toLocaleString()}${view}`;
+  }
 
   set('reportNarrative', payload.narrative || '<p>No narrative available.</p>');
   set('reportRecs', payload.recs || '<li>No recommendations available.</li>');

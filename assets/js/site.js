@@ -1,5 +1,26 @@
 (() => {
   const root = document.querySelector('[data-pricing]');
+  const header = document.querySelector('.site-top');
+  const reveals = Array.from(document.querySelectorAll('.reveal'));
+
+  if (header) {
+    const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  if (reveals.length) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => io.observe(el));
+  }
+
   if (!root) return;
 
   const buttons = Array.from(document.querySelectorAll('.billing-btn'));

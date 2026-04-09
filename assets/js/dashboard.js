@@ -1173,6 +1173,8 @@
       }).join('');
 
       const payload = {
+        generatedAt: new Date().toISOString(),
+        activeView: document.getElementById('activeViewLabel')?.textContent || 'Overview',
         narrative: document.getElementById('exec-narrative')?.innerHTML || '',
         recs: document.getElementById('exec-recs')?.innerHTML || '',
         kpis,
@@ -1183,7 +1185,8 @@
       };
 
       localStorage.setItem('socialstreamReportPayload', JSON.stringify(payload));
-      window.open('report.html?autoprint=1', '_blank');
+      window.open('report.html', '_blank');
+      showToast('Executive report prepared in a new tab.', 'success');
     }
 
     /* ══════════════════════════════════
