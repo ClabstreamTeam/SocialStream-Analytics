@@ -220,9 +220,11 @@
     ══════════════════════════════════ */
     function showBadge(type, msg) {
       const b = document.getElementById('statusBadge'), t = document.getElementById('statusText');
-      b.style.display = 'inline-flex'; t.textContent = msg;
+      if (!b || !t) return;
+      b.style.display = 'inline-flex';
+      t.textContent = msg;
       b.className = 'badge ' + (type === 'live' ? 'badge-live' : type === 'error' ? 'badge-error' : 'badge-running');
-      const first = b.querySelector('span:first-child'); if (first) first.remove();
+      b.querySelectorAll('.pulse-green, .pulse-orange').forEach(el => el.remove());
       const dot = document.createElement('span');
       dot.className = type === 'live' ? 'pulse-green' : 'pulse-orange';
       b.prepend(dot);
