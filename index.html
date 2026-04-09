@@ -2946,7 +2946,7 @@
     const POLL_MS = 5000;
 
     async function startApifyRun(payload) {
-      const res = await fetch('/api/apify/run', {
+      const res = await fetch('/api/apify/run.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -2959,7 +2959,7 @@
     }
 
     async function getApifyStatus(runId) {
-      const res = await fetch(`/api/apify/status?runId=${encodeURIComponent(runId)}`);
+      const res = await fetch(`/api/apify/status.js?runId=${encodeURIComponent(runId)}`);
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body?.error?.message || body?.details || `HTTP ${res.status}`);
@@ -2968,7 +2968,7 @@
     }
 
     async function fetchDatasetItems(datasetId) {
-      const res = await fetch(`/api/apify/dataset?datasetId=${encodeURIComponent(datasetId)}`);
+      const res = await fetch(`/api/apify/dataset.js?datasetId=${encodeURIComponent(datasetId)}`);
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body?.error?.message || body?.details || `HTTP ${res.status}`);
@@ -3194,6 +3194,8 @@
           friendlyMsg = 'Invalid API token. Please check your Apify account has an active subscription.';
         } else if (err.message.includes('402') || err.message.toLowerCase().includes('payment')) {
           friendlyMsg = 'Apify account has insufficient compute units. Top up at console.apify.com.';
+        } else if (err.message.toLowerCase().includes('remaining usage') || err.message.toLowerCase().includes('exceed your remaining usage')) {
+          friendlyMsg = 'Apify usage limit reached. Add billing/credits in console.apify.com, then run analysis again.';
         } else if (err.message.includes('429')) {
           friendlyMsg = 'Rate limited by Apify. Wait a minute and try again.';
         }
