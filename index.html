@@ -148,14 +148,14 @@
     .site-header {
       background: var(--bg-secondary);
       border-bottom: 1px solid var(--border-primary);
-      padding: var(--space-6) var(--space-8);
+      padding: var(--space-4) var(--space-6);
       box-shadow: var(--shadow-sm);
     }
 
     .site-header .logo-wrap {
       display: flex;
       align-items: center;
-      gap: var(--space-4);
+      gap: var(--space-3);
     }
 
     .site-header .logo-img {
@@ -170,7 +170,7 @@
     }
 
     .site-header .logo-text {
-      font-size: var(--font-size-2xl);
+      font-size: 1.3rem;
       font-weight: var(--font-weight-bold);
       color: var(--text-primary);
       letter-spacing: -0.5px;
@@ -1536,28 +1536,33 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
-      padding: 18px 24px;
+      gap: 14px;
+      padding: 12px 18px;
+      min-height: 56px;
       background: rgba(255,255,255,0.96);
       backdrop-filter: blur(18px);
       border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
     }
     .site-nav .nav-left,
     .site-nav .nav-actions {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
+    }
+    .site-nav .logo-img {
+      height: 32px;
+      width: 32px;
     }
     .site-nav .nav-links {
       display: flex;
-      gap: 24px;
+      gap: 16px;
       align-items: center;
       flex-wrap: wrap;
     }
     .site-nav .nav-links a {
       color: var(--text-secondary);
-      font-size: 14px;
+      font-size: 13px;
       text-decoration: none;
       font-weight: 600;
       transition: color .2s ease;
@@ -1573,7 +1578,7 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      padding: 14px 22px;
+      padding: 11px 18px;
       border-radius: 999px;
       border: none;
       background: var(--blue-primary);

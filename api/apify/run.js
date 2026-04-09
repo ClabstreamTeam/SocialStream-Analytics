@@ -8,24 +8,33 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { usernames, maxResults, sortBy } = req.body;
+    const { profiles, usernames, maxResults, resultsPerPage, sortBy } = req.body;
+    const profileUrls = Array.isArray(profiles)
+      ? profiles
+      : Array.isArray(usernames)
+        ? usernames.map(u => u.startsWith('https://') ? u : `https://www.tiktok.com/@${u}`)
+        : [];
 
-    if (!usernames || !Array.isArray(usernames) || usernames.length === 0) {
-      return res.status(400).json({ error: 'Usernames array is required' });
+    if (!profileUrls.length) {
+      return res.status(400).json({ error: 'profiles array is required' });
     }
 
-    if (!maxResults || typeof maxResults !== 'number' || maxResults < 1 || maxResults > 500) {
+    const resolvedMax = typeof maxResults === 'number' ? maxResults : (typeof resultsPerPage === 'number' ? resultsPerPage : 50);
+    if (resolvedMax < 1 || resolvedMax > 500) {
       return res.status(400).json({ error: 'maxResults must be a number between 1 and 500' });
     }
 
     // Build input for Apify actor
     const input = {
-      usernames: usernames,
-      resultsPerPage: maxResults,
+      profiles: profileUrls,
+      resultsPerPage: Math.min(resolvedMax, 50),
+      maxResults: resolvedMax,
+      sortBy: sortBy === 'popular' ? 'popular' : 'latest',
+      shouldDownloadVideos: false,
       shouldDownloadCovers: false,
-      shouldDownloadSlideshowImages: false,
       shouldDownloadSubtitles: false,
-      resultsType: sortBy === 'popular' ? 'popular' : 'latest'
+      shouldDownloadSlideshowImages: false,
+      profilesPerQuery: profileUrls.length
     };
 
     // Start Apify actor run
