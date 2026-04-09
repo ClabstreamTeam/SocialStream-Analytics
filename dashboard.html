@@ -1301,7 +1301,7 @@
        PROCESS DATA
     ══════════════════════════════════ */
     function processData(data) {
-      let likes = 0, comments = 0, saves = 0, shares = 0, reposts = 0, plays = 0;
+      let likes = 0, comments = 0, saves = 0, shares = 0, reposts = 0;
       const timeSt = {}, hashSt = {}, daysSt = {}, engPP = {}, hourSt = {}, playsSt = {}, sharesSt = {}, repostsSt = {};
       const DA = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       DA.forEach(d => { daysSt[d] = 0; });
@@ -1310,7 +1310,7 @@
         const l = Number(row.diggCount || 0), c = Number(row.commentCount || 0),
           s = Number(row.collectCount || 0), p = Number(row.playCount || 0),
           sh = Number(row.shareCount || 0), rp = Number(row.repostCount || 0);
-        likes += l; comments += c; saves += s; shares += sh; reposts += rp; plays += p;
+        likes += l; comments += c; saves += s; shares += sh; reposts += rp;
         topPosts.push({
           desc: row.desc || '(no description)',
           likes: l,
@@ -1351,10 +1351,11 @@
       document.getElementById('kpi-saves').textContent = fmt(saves);
       document.getElementById('kpi-shares').textContent = fmt(shares);
       document.getElementById('kpi-reposts').textContent = fmt(reposts);
+      const totalPlays = data.reduce((sum, row) => sum + Number(row.playCount || 0), 0);
             // masthead quick stats
             setText('masthead-kpi-posts', fmt(data.length));
             setText('masthead-kpi-likes', fmt(likes));
-            setText('masthead-kpi-plays', fmt(plays));
+        setText('masthead-kpi-plays', fmt(totalPlays));
             const avgEr = data.length > 0 ? (data.reduce((s, r) => {
               const p = Number(r.playCount || 0), l = Number(r.diggCount || 0) + Number(r.commentCount || 0) + Number(r.collectCount || 0) + Number(r.shareCount || 0);
               return s + (p > 0 ? (l / p) * 100 : 0);
