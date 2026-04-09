@@ -1301,7 +1301,7 @@
        PROCESS DATA
     ══════════════════════════════════ */
     function processData(data) {
-      let likes = 0, comments = 0, saves = 0, shares = 0, reposts = 0;
+      let likes = 0, comments = 0, saves = 0, shares = 0, reposts = 0, plays = 0;
       const timeSt = {}, hashSt = {}, daysSt = {}, engPP = {}, hourSt = {}, playsSt = {}, sharesSt = {}, repostsSt = {};
       const DA = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       DA.forEach(d => { daysSt[d] = 0; });
@@ -1310,7 +1310,7 @@
         const l = Number(row.diggCount || 0), c = Number(row.commentCount || 0),
           s = Number(row.collectCount || 0), p = Number(row.playCount || 0),
           sh = Number(row.shareCount || 0), rp = Number(row.repostCount || 0);
-        likes += l; comments += c; saves += s; shares += sh; reposts += rp;
+        likes += l; comments += c; saves += s; shares += sh; reposts += rp; plays += p;
         topPosts.push({
           desc: row.desc || '(no description)',
           likes: l,
