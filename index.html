@@ -2947,10 +2947,23 @@
     const PROD_API_ORIGIN = 'https://socialstream-analytics.vercel.app';
     const IS_VERCEL_HOST = /(?:^|\.)vercel\.app$/i.test(window.location.hostname);
     const IS_LOCAL_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-    const API_ORIGIN = (IS_VERCEL_HOST || !IS_LOCAL_HOST) ? '' : PROD_API_ORIGIN;
+    let ACTIVE_API_ORIGIN = IS_LOCAL_HOST ? PROD_API_ORIGIN : '';
+
+    function shouldRetryWithProdOrigin(res) {
+      return (res.status === 404 || res.status === 405) && ACTIVE_API_ORIGIN !== PROD_API_ORIGIN;
+    }
+
+    async function apiFetch(path, options = {}) {
+      let res = await fetch(`${ACTIVE_API_ORIGIN}${path}`, options);
+      if (!res.ok && shouldRetryWithProdOrigin(res)) {
+        ACTIVE_API_ORIGIN = PROD_API_ORIGIN;
+        res = await fetch(`${ACTIVE_API_ORIGIN}${path}`, options);
+      }
+      return res;
+    }
 
     async function startApifyRun(payload) {
-      const res = await fetch(`${API_ORIGIN}/api/apify/run.js`, {
+      const res = await apiFetch('/api/apify/run.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -2963,7 +2976,7 @@
     }
 
     async function getApifyStatus(runId) {
-      const res = await fetch(`${API_ORIGIN}/api/apify/status.js?runId=${encodeURIComponent(runId)}`);
+      const res = await apiFetch(`/api/apify/status.js?runId=${encodeURIComponent(runId)}`);
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body?.error?.message || body?.details || `HTTP ${res.status}`);
@@ -2972,7 +2985,7 @@
     }
 
     async function fetchDatasetItems(datasetId) {
-      const res = await fetch(`${API_ORIGIN}/api/apify/dataset.js?datasetId=${encodeURIComponent(datasetId)}`);
+      const res = await apiFetch(`/api/apify/dataset.js?datasetId=${encodeURIComponent(datasetId)}`);
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body?.error?.message || body?.details || `HTTP ${res.status}`);
