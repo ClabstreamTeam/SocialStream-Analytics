@@ -96,12 +96,18 @@
 	pointer-events: none;
 }
 
-.rail-link:hover,
-.rail-link.active {
+.rail-link:hover {
 	color: #ffffff;
 	background: rgba(255, 255, 255, 0.08);
 	border-color: rgba(255, 255, 255, 0.12);
 	transform: translateY(-1px);
+}
+
+.rail-link.active {
+	color: #ffffff;
+	background: linear-gradient(135deg, rgba(38, 103, 255, 0.35), rgba(83, 177, 253, 0.18));
+	border-color: rgba(38, 103, 255, 0.45);
+	box-shadow: 0 0 0 1px rgba(38, 103, 255, 0.2), inset 0 0 12px rgba(38, 103, 255, 0.08);
 }
 
 .shell-main {
@@ -143,9 +149,10 @@
 
 .utility-title {
 	font-size: 18px;
-	font-weight: 700;
+	font-weight: 800;
 	margin: 0;
 	color: var(--shell-text);
+	letter-spacing: -0.02em;
 }
 
 .logo-sub {
@@ -204,6 +211,111 @@
 	padding: 24px 26px;
 }
 
+/* ─── Compact brand masthead card ─── */
+.masthead-brand {
+	padding: 24px 26px;
+	display: flex;
+	flex-direction: column;
+	gap: 22px;
+	position: relative;
+	overflow: hidden;
+}
+
+.masthead-brand::before {
+	content: '';
+	position: absolute;
+	top: -40px;
+	right: -40px;
+	width: 200px;
+	height: 200px;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(38, 103, 255, 0.08) 0%, transparent 70%);
+	pointer-events: none;
+}
+
+.masthead-brand-logo {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.masthead-logo-mark {
+	width: 48px;
+	height: 48px;
+	border-radius: 16px;
+	background: linear-gradient(135deg, #1e56f0, #53b1fd);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 22px;
+	color: #fff;
+	box-shadow: 0 10px 28px rgba(38, 103, 255, 0.32);
+	flex-shrink: 0;
+}
+
+.masthead-brand-name {
+	font-size: 22px;
+	font-weight: 800;
+	color: var(--shell-text);
+	letter-spacing: -0.025em;
+}
+
+.masthead-brand-tagline {
+	font-size: 12px;
+	color: var(--shell-muted);
+	font-weight: 500;
+	margin-top: 2px;
+}
+
+.masthead-live-stats {
+	display: flex;
+	align-items: center;
+	gap: 24px;
+}
+
+.masthead-stat {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.masthead-stat-val {
+	font-size: 28px;
+	font-weight: 800;
+	letter-spacing: -0.04em;
+	color: var(--shell-text);
+	line-height: 1;
+}
+
+.masthead-stat-lbl {
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	font-weight: 700;
+	color: var(--shell-subtle);
+}
+
+.masthead-stat-divider {
+	width: 1px;
+	height: 40px;
+	background: var(--shell-border);
+	flex-shrink: 0;
+}
+
+.masthead-date-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 9px 14px;
+	border-radius: 999px;
+	border: 1px solid var(--shell-border);
+	background: var(--shell-panel-2);
+	color: var(--shell-muted);
+	font-size: 12px;
+	font-weight: 600;
+	max-width: fit-content;
+}
+
 .section-kicker,
 .chart-section-label {
 	font-size: 11px;
@@ -258,8 +370,13 @@
 
 .metric-tile strong {
 	font-size: 28px;
+	font-weight: 800;
 	line-height: 1;
 	letter-spacing: -0.04em;
+	background: linear-gradient(135deg, #0f172a 0%, #2667ff 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
 }
 
 .metric-tile small {
@@ -669,12 +786,14 @@ input[type='date']:focus {
 }
 
 .view-toolbar {
-	padding: 18px 22px;
+	padding: 16px 22px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: 14px;
 	flex-wrap: wrap;
+	background: linear-gradient(90deg, #fff 0%, #f9fbff 100%) !important;
+	border-bottom: 1px solid var(--shell-border) !important;
 }
 
 .toolbar-metrics {
@@ -709,7 +828,8 @@ input[type='date']:focus {
 .story-title {
 	margin: 0;
 	font-size: 20px;
-	font-weight: 700;
+	font-weight: 800;
+	letter-spacing: -0.02em;
 }
 
 .story-meta {
@@ -743,10 +863,12 @@ input[type='date']:focus {
 
 .narrative-box {
 	padding: 18px 20px;
-	line-height: 1.75;
+	line-height: 1.78;
 	font-size: 13.5px;
 	color: var(--shell-text);
 	margin-bottom: 16px;
+	background: linear-gradient(135deg, #f9fbff 0%, #fff 100%) !important;
+	border: 1px solid #dde9ff !important;
 }
 
 .stats-mini-grid {
@@ -773,9 +895,14 @@ input[type='date']:focus {
 
 .stat-mini strong {
 	display: block;
-	font-size: 24px;
+	font-size: 26px;
+	font-weight: 800;
 	color: var(--shell-text);
-	letter-spacing: -0.03em;
+	letter-spacing: -0.04em;
+	background: linear-gradient(135deg, #0f172a 0%, #2667ff 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
 }
 
 .stat-mini small {
@@ -868,9 +995,14 @@ input[type='date']:focus {
 }
 
 .kpi-val {
-	font-size: 30px;
-	font-weight: 700;
+	font-size: 28px;
+	font-weight: 800;
 	letter-spacing: -0.04em;
+	color: var(--shell-text);
+	background: linear-gradient(135deg, #0f172a 0%, #2667ff 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
 }
 
 .kpi-footnote {

@@ -55,31 +55,52 @@
 
       <main class="workspace-canvas">
         <section class="workspace-masthead">
-          <div class="card-surface masthead-copy">
-            <div class="section-kicker">B2B analytics workspace</div>
-            <h2>Operate social content like a professional command center, not a one-off reporting page.</h2>
-            <p>Track publishing cadence, benchmark engagement quality, review editorial winners and misses, and move from raw scraped data to decision-ready recommendations in a single workspace.</p>
+          <div class="card-surface masthead-brand">
+            <div class="masthead-brand-logo">
+              <div class="masthead-logo-mark"><i class="fa-solid fa-wave-square"></i></div>
+              <div>
+                <div class="masthead-brand-name">SocialStream</div>
+                <div class="masthead-brand-tagline">TikTok Intelligence Workspace</div>
+              </div>
+            </div>
+            <div class="masthead-live-stats">
+              <div class="masthead-stat">
+                <span class="masthead-stat-val" id="workspaceProfileCount">0</span>
+                <span class="masthead-stat-lbl">Profiles</span>
+              </div>
+              <div class="masthead-stat-divider"></div>
+              <div class="masthead-stat">
+                <span class="masthead-stat-val" id="workspacePostCount">0</span>
+                <span class="masthead-stat-lbl">Posts</span>
+              </div>
+              <div class="masthead-stat-divider"></div>
+              <div class="masthead-stat">
+                <span class="masthead-stat-val" id="workspaceMedianReach">0</span>
+                <span class="masthead-stat-lbl">Median reach</span>
+              </div>
+            </div>
+            <div class="masthead-date-chip"><i class="fa-regular fa-calendar" style="font-size:11px;"></i> <span id="workspaceDateRange">No data yet</span></div>
           </div>
           <div class="card-surface metric-strip">
             <article class="metric-tile">
-              <span class="metric-label">Profiles</span>
-              <strong id="workspaceProfileCount">0</strong>
-              <small>accounts under watch</small>
+              <span class="metric-label">Total posts</span>
+              <strong id="masthead-kpi-posts">–</strong>
+              <small>in current scope</small>
             </article>
             <article class="metric-tile">
-              <span class="metric-label">Posts analyzed</span>
-              <strong id="workspacePostCount">0</strong>
-              <small>records in current view</small>
+              <span class="metric-label">Total likes</span>
+              <strong id="masthead-kpi-likes">–</strong>
+              <small>aggregate approval</small>
             </article>
             <article class="metric-tile">
-              <span class="metric-label">Date window</span>
-              <strong id="workspaceDateRange">–</strong>
-              <small>observed posting span</small>
+              <span class="metric-label">Total plays</span>
+              <strong id="masthead-kpi-plays">–</strong>
+              <small>combined reach</small>
             </article>
             <article class="metric-tile">
-              <span class="metric-label">Median reach</span>
-              <strong id="workspaceMedianReach">0</strong>
-              <small>typical play count per post</small>
+              <span class="metric-label">Avg ER%</span>
+              <strong id="masthead-kpi-er">–</strong>
+              <small>engagement rate</small>
             </article>
           </div>
         </section>
@@ -704,11 +725,16 @@
       setText('workspacePostCount', '0');
       setText('workspaceDateRange', '–');
       setText('workspaceMedianReach', '0');
+      setText('masthead-kpi-posts', '–');
+      setText('masthead-kpi-likes', '–');
+      setText('masthead-kpi-plays', '–');
+      setText('masthead-kpi-er', '–');
       setText('toolbarProfileScope', '0 profiles');
       setText('toolbarDateScope', 'No range yet');
       setText('signalBestDay', '–');
       setText('signalBestHour', '–');
       setText('signalBoostMix', '0%');
+      ['kpi-videos', 'kpi-likes', 'kpi-comments', 'kpi-saves', 'kpi-shares', 'kpi-reposts', 'kpi-ads'].forEach(id => setText(id, '–'));
       setObjective('objectiveReachFill', 'objectiveReachValue', 0);
       setObjective('objectiveCadenceFill', 'objectiveCadenceValue', 0);
       setObjective('objectiveEfficiencyFill', 'objectiveEfficiencyValue', 0);
@@ -1325,6 +1351,15 @@
       document.getElementById('kpi-saves').textContent = fmt(saves);
       document.getElementById('kpi-shares').textContent = fmt(shares);
       document.getElementById('kpi-reposts').textContent = fmt(reposts);
+            // masthead quick stats
+            setText('masthead-kpi-posts', fmt(data.length));
+            setText('masthead-kpi-likes', fmt(likes));
+            setText('masthead-kpi-plays', fmt(plays));
+            const avgEr = data.length > 0 ? (data.reduce((s, r) => {
+              const p = Number(r.playCount || 0), l = Number(r.diggCount || 0) + Number(r.commentCount || 0) + Number(r.collectCount || 0) + Number(r.shareCount || 0);
+              return s + (p > 0 ? (l / p) * 100 : 0);
+            }, 0) / data.length).toFixed(2) : 0;
+            setText('masthead-kpi-er', avgEr + '%');
       renderTopPosts(topPosts);
       renderPie(likes, comments, saves, shares);
       renderTimeline(timeSt);

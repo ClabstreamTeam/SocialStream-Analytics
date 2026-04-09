@@ -7,12 +7,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" href="assets/css/shared.css">
   <link rel="stylesheet" href="assets/css/site.css">
 </head>
 <body class="site-body">
+
   <header class="site-top">
-    <img src="assets/branding/socialstream-logo.png" alt="SocialStream" class="site-logo" onerror="this.style.display='none'">
+    <a href="/" class="site-logo-fallback">
+      <img src="assets/branding/socialstream-logo.png" alt="" class="site-logo" onerror="this.style.display='none'">
+      <span>SocialStream</span>
+    </a>
     <nav>
       <a href="#features">Features</a>
       <a href="#who">Who it's for</a>
@@ -22,36 +27,119 @@
   </header>
 
   <main class="site-main">
+
+    <!-- ── Hero ── -->
     <section class="hero">
-      <p class="eyebrow">ENTERPRISE TIKTOK ANALYTICS</p>
-      <h1>Run SocialStream as your analytics control center.</h1>
-      <p>SocialStream helps teams scrape profile data, monitor performance, and convert TikTok activity into clear executive reporting.</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="dashboard.html">Launch Dashboard</a>
-        <a class="btn btn-secondary" href="#features">View Features</a>
+      <div class="hero-inner">
+        <p class="eyebrow"><i class="fa-solid fa-bolt"></i> Enterprise TikTok Analytics</p>
+        <h1>Your social analytics<br><span class="grad">command center.</span></h1>
+        <p>SocialStream scrapes TikTok profile data, surfaces performance trends, and converts raw engagement into executive-grade reporting — automatically.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="dashboard.html"><i class="fa-solid fa-arrow-right"></i> Launch Dashboard</a>
+          <a class="btn btn-secondary" href="#features">View Features</a>
+        </div>
+      </div>
+
+      <!-- Product mockup -->
+      <div class="hero-mockup">
+        <div class="mockup-window">
+          <div class="mockup-titlebar">
+            <div class="mockup-dot"></div>
+            <div class="mockup-dot"></div>
+            <div class="mockup-dot"></div>
+            <div class="mockup-url">
+              <i class="fa-solid fa-lock" style="font-size:10px;"></i>
+              socialstream-analytics.vercel.app/dashboard
+            </div>
+          </div>
+          <div class="mockup-body">
+            <div class="mockup-rail">
+              <div class="mockup-brand"></div>
+              <div class="mockup-navdot lit"></div>
+              <div class="mockup-navdot"></div>
+              <div class="mockup-navdot"></div>
+              <div class="mockup-navdot"></div>
+            </div>
+            <div class="mockup-content">
+              <div class="mockup-kpi"><div class="mockup-kpi-lbl"></div><div class="mockup-kpi-val"></div></div>
+              <div class="mockup-kpi"><div class="mockup-kpi-lbl"></div><div class="mockup-kpi-val"></div></div>
+              <div class="mockup-kpi"><div class="mockup-kpi-lbl"></div><div class="mockup-kpi-val"></div></div>
+              <div class="mockup-kpi"><div class="mockup-kpi-lbl"></div><div class="mockup-kpi-val"></div></div>
+              <div class="mockup-chart">
+                <div class="mockup-bar"></div>
+                <div class="mockup-bar"></div>
+                <div class="mockup-bar"></div>
+                <div class="mockup-bar"></div>
+                <div class="mockup-bar"></div>
+                <div class="mockup-bar"></div>
+                <div class="mockup-bar"></div>
+                <div class="mockup-bar"></div>
+                <div class="mockup-bar"></div>
+                <div class="mockup-bar"></div>
+                <div class="mockup-bar"></div>
+                <div class="mockup-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section id="features" class="panel-grid">
-      <article class="panel"><h3>Unified analytics workspace</h3><p>One place for setup, scraping, KPIs, charting, highlights, and post-level reporting.</p></article>
-      <article class="panel"><h3>Executive-ready summaries</h3><p>Auto-generated narrative summaries and recommendation blocks for weekly stakeholder reviews.</p></article>
-      <article class="panel"><h3>Report export workflow</h3><p>Dedicated report page for PDF output focused only on analysis, no marketing sections.</p></article>
+    <!-- ── Features ── -->
+    <section id="features" class="features-section">
+      <div class="section-outer">
+        <div class="section-intro">
+          <div class="section-tag">Features</div>
+          <h2>Everything you need. Nothing you don't.</h2>
+          <p>A complete TikTok analytics workflow from data collection to stakeholder reporting, in a single workspace.</p>
+        </div>
+        <div class="panel-grid">
+          <article class="panel">
+            <div class="panel-icon" style="background:#eef4ff;color:#2667ff;"><i class="fa-solid fa-chart-column"></i></div>
+            <h3>Unified analytics workspace</h3>
+            <p>Setup, scraping, KPIs, charts, highlights, and post-level reporting — all in one coherent workspace with no context-switching required.</p>
+          </article>
+          <article class="panel">
+            <div class="panel-icon" style="background:#e9f9f0;color:#17b26a;"><i class="fa-solid fa-newspaper"></i></div>
+            <h3>Executive-ready summaries</h3>
+            <p>Auto-generated narrative summaries and strategic recommendation blocks written for weekly stakeholder reviews — no manual analysis needed.</p>
+          </article>
+          <article class="panel">
+            <div class="panel-icon" style="background:#fff8eb;color:#b45309;"><i class="fa-solid fa-file-pdf"></i></div>
+            <h3>Report export workflow</h3>
+            <p>A dedicated report page for PDF output focused only on analysis. No marketing copy, no clutter — just clean, printable intelligence.</p>
+          </article>
+        </div>
+      </div>
     </section>
 
-    <section id="who" class="split">
-      <div><h2>Built for creators, brands, and agencies</h2><p>Compare profiles, detect winning patterns, and build repeatable growth strategies with reliable data.</p></div>
-      <ul>
-        <li>Campaign optimization</li>
-        <li>Cross-profile benchmarking</li>
-        <li>Trend and cadence analysis</li>
-        <li>Client-ready reporting</li>
-      </ul>
+    <!-- ── Who it's for ── -->
+    <section id="who" class="who-section">
+      <div class="section-outer">
+        <div class="split">
+          <div>
+            <h2>Built for creators, brands, and agencies.</h2>
+            <p>Compare profiles, detect winning content patterns, and build repeatable growth strategies backed by reliable scraped data — not platform estimates.</p>
+          </div>
+          <ul>
+            <li>Campaign optimization</li>
+            <li>Cross-profile benchmarking</li>
+            <li>Trend and cadence analysis</li>
+            <li>Client-ready reporting</li>
+          </ul>
+        </div>
+      </div>
     </section>
 
-    <section id="security" class="security">
-      <h2>Secure by design</h2>
-      <p>API tokens are handled in serverless functions and environment variables, never exposed in client code.</p>
+    <!-- ── Security ── -->
+    <section id="security" class="security-section">
+      <div class="security">
+        <div class="security-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <h2>Secure by design.</h2>
+        <p>API tokens are handled exclusively in Vercel serverless functions and environment variables — never exposed in client-side code.</p>
+      </div>
     </section>
+
   </main>
 
   <footer class="site-footer-lite">© 2026 SocialStream. All rights reserved.</footer>
