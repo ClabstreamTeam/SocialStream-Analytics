@@ -22,6 +22,7 @@
 
   set('reportNarrative', payload.narrative || '<p>No narrative available.</p>');
   set('reportRecs', payload.recs || '<li>No recommendations available.</li>');
+  set('reportFindings', (payload.findings || []).map(v => `<article class="finding-card">${v}</article>`).join('') || '<article class="finding-card">No findings available.</article>');
   set('reportKpis', payload.kpis || '<p>No KPI data.</p>');
   set('reportHighlights', payload.highlights || '<p>No highlights available.</p>');
   set('reportLowlights', payload.lowlights || '<p>No lowlights available.</p>');
@@ -37,7 +38,4 @@
     });
   }
 
-  if (new URLSearchParams(location.search).get('autoprint') === '1') {
-    setTimeout(() => window.print(), 300);
-  }
 })();

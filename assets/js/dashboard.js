@@ -120,15 +120,15 @@
       });
     }
     function resetWorkspaceChrome() {
-      setText('workspaceProfileCount', '0');
-      setText('workspacePostCount', '0');
-      setText('workspaceDateRange', '–');
-      setText('workspaceMedianReach', '0');
+      setText('workspaceProfileCount', '—');
+      setText('workspacePostCount', '—');
+      setText('workspaceDateRange', 'Ready to run');
+      setText('workspaceMedianReach', '—');
       setText('masthead-kpi-posts', '–');
       setText('masthead-kpi-likes', '–');
       setText('masthead-kpi-plays', '–');
       setText('masthead-kpi-er', '–');
-      setText('toolbarProfileScope', '0 profiles');
+      setText('toolbarProfileScope', 'No scope selected');
       setText('toolbarDateScope', 'No range yet');
       setText('signalBestDay', '–');
       setText('signalBestHour', '–');
@@ -1175,6 +1175,11 @@
       const payload = {
         generatedAt: new Date().toISOString(),
         activeView: document.getElementById('activeViewLabel')?.textContent || 'Overview',
+        findings: [
+          `Best weekday: ${document.getElementById('signalBestDay')?.textContent || '—'}`,
+          `Best efficiency slot: ${document.getElementById('signalBestHour')?.textContent || '—'}`,
+          `Boost mix: ${document.getElementById('signalBoostMix')?.textContent || '0%'}`
+        ],
         narrative: document.getElementById('exec-narrative')?.innerHTML || '',
         recs: document.getElementById('exec-recs')?.innerHTML || '',
         kpis,
