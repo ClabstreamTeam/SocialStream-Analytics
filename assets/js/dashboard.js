@@ -162,20 +162,42 @@
       wrap.style.display = 'grid';
       // Set defaults
       const to = new Date(); const from = new Date(); from.setDate(from.getDate() - 30);
-      document.getElementById('dateFrom').value = from.toISOString().split('T')[0];
-      document.getElementById('dateTo').value = to.toISOString().split('T')[0];
+      document.getElementById('dateFrom').value = formatDateForInput(from);
+      document.getElementById('dateTo').value = formatDateForInput(to);
+    }
+    function formatDateForInput(date) {
+      if (!date) return '';
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+    function parseDateInput(value, endOfDay = false) {
+      if (!value) return null;
+      const [year, month, day] = value.split('-').map(Number);
+      if (!year || !month || !day) return null;
+      return new Date(
+        year,
+        month - 1,
+        day,
+        endOfDay ? 23 : 0,
+        endOfDay ? 59 : 0,
+        endOfDay ? 59 : 0,
+        endOfDay ? 999 : 0
+      );
     }
     function getDateFilter() {
       if (selectedDays === -1) {
-        customFrom = document.getElementById('dateFrom').value ? new Date(document.getElementById('dateFrom').value) : null;
-        customTo = document.getElementById('dateTo').value ? new Date(document.getElementById('dateTo').value) : null;
-        if (customTo) customTo.setHours(23, 59, 59);
-        return { from: customFrom, to: customTo };
+        const fromDate = document.getElementById('dateFrom').value;
+        const toDate = document.getElementById('dateTo').value;
+        customFrom = parseDateInput(fromDate);
+        customTo = parseDateInput(toDate, true);
+        return { from: customFrom, to: customTo, fromDate: fromDate || null, toDate: toDate || null };
       }
       if (selectedDays === 0) return { from: null, to: null };
       const to = new Date(); const from = new Date();
       from.setDate(from.getDate() - selectedDays);
-      return { from, to };
+      return { from, to, fromDate: formatDateForInput(from), toDate: formatDateForInput(to) };
     }
 
     /* ══════════════════════════════════
@@ -382,10 +404,10 @@
       // clockworks~tiktok-scraper accepts oldestPostDate / newestPostDate as ISO strings
       if (hasDateFilter) {
         if (dateFilter.from) {
-          payload.oldestPostDate = dateFilter.from.toISOString().split('T')[0];
+          payload.oldestPostDate = dateFilter.fromDate || formatDateForInput(dateFilter.from);
         }
         if (dateFilter.to) {
-          payload.newestPostDate = dateFilter.to.toISOString().split('T')[0];
+          payload.newestPostDate = dateFilter.toDate || formatDateForInput(dateFilter.to);
         }
       }
 
