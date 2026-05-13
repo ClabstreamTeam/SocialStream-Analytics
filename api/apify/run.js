@@ -1,5 +1,14 @@
 const ACTOR_ID = 'clockworks~tiktok-scraper';
 const APIFY_BASE = 'https://api.apify.com/v2';
+const DATE_ONLY_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function isDateOnly(value) {
+  return typeof value === 'string' && DATE_ONLY_RE.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`));
+}
+
+function normalizeSortBy(value) {
+  return ['latest', 'popular', 'mostLiked'].includes(value) ? value : 'latest';
+}
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -16,7 +25,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { profiles, usernames, maxResults, resultsPerPage, sortBy } = req.body;
+    const { profiles, usernames, maxResults, resultsPerPage, sortBy, oldestPostDate, newestPostDate } = req.body;
     const profileUrls = Array.isArray(profiles)
       ? profiles
       : Array.isArray(usernames)
@@ -32,18 +41,34 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'maxResults must be a number between 1 and 500' });
     }
 
+    if (oldestPostDate && !isDateOnly(oldestPostDate)) {
+      return res.status(400).json({ error: 'oldestPostDate must be in YYYY-MM-DD format' });
+    }
+
+    if (newestPostDate && !isDateOnly(newestPostDate)) {
+      return res.status(400).json({ error: 'newestPostDate must be in YYYY-MM-DD format' });
+    }
+
     // Build input for Apify actor
     const input = {
       profiles: profileUrls,
       resultsPerPage: Math.min(resolvedMax, 50),
       maxResults: resolvedMax,
-      sortBy: sortBy === 'popular' ? 'popular' : 'latest',
+      sortBy: normalizeSortBy(sortBy),
       shouldDownloadVideos: false,
       shouldDownloadCovers: false,
       shouldDownloadSubtitles: false,
       shouldDownloadSlideshowImages: false,
       profilesPerQuery: profileUrls.length
     };
+
+    if (oldestPostDate) {
+      input.oldestPostDate = oldestPostDate;
+    }
+
+    if (newestPostDate) {
+      input.newestPostDate = newestPostDate;
+    }
 
     // Start Apify actor run
     const runResponse = await fetch(`${APIFY_BASE}/acts/${encodeURIComponent(ACTOR_ID)}/runs`, {
